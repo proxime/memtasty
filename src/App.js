@@ -1,7 +1,11 @@
-import React from 'react'
+import React from 'react';
+import './scss/main.scss';
+import './tools/fontawesome-free-5.12.0-web/css/all.css';
+
+import Navigation from './navigation/Navigation';
 
 const App = () => {
-  return <h1>MemTasty</h1>
-}
+    return <Navigation />;
+};
 
-export default App
+export default App;
