@@ -5,6 +5,10 @@
     width: 100vw;
     background-color: black;
     color: white;
+    transition: transform 0.2s linear;
+    &-hidden {
+        transform: translateY(-36px);
+    }
     &__container {
         display: flex;
         align-items: center;
@@ -67,6 +71,27 @@
         user-select: none;
         &:hover {
             background-color: darken($primary-color, 3%);
+        }
+    }
+}
+
+.navigation-top-bar {
+    width: 100%;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    &__categories {
+        padding: 10px 0;
+        max-width: $max-width;
+        margin: 0 auto;
+    }
+    &__item {
+        color: white;
+        text-decoration: none;
+        padding: 3px 7px;
+        margin: 0 5px;
+        font-size: 1.3rem;
+        font-weight: 500;
+        &:hover {
+            text-decoration: underline;
         }
     }
 }
