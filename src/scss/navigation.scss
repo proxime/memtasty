@@ -2,7 +2,7 @@
     position: fixed;
     top: 0;
     left: 0;
-    width: 100%;
+    width: 100vw;
     background-color: black;
     color: white;
     &__container {
@@ -53,6 +53,7 @@
         font-size: 1.4rem;
         padding: 5px 8px;
         margin-right: 8px;
+        user-select: none;
         &:hover {
             text-decoration: underline;
         }
@@ -63,6 +64,7 @@
         font-size: 1.4rem;
         padding: 7px 8px;
         border-radius: 3px;
+        user-select: none;
         &:hover {
             background-color: darken($primary-color, 3%);
         }
