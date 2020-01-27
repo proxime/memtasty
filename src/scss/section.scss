@@ -1,0 +1,118 @@
+.section {
+    display: flex;
+    justify-content: space-between;
+    padding: 120px 10px 30px;
+    max-width: $max-width;
+    margin: 0 auto;
+    color: white;
+    &__list {
+        flex-grow: 1;
+        max-width: 650px;
+    }
+    &__recommended {
+        flex-grow: 1;
+        max-width: 350px;
+        padding: 20px;
+    }
+}
+
+.element {
+    padding: 30px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.5);
+    &__top {
+        display: flex;
+        align-items: center;
+        margin-bottom: 10px;
+    }
+    &__author {
+        display: flex;
+        align-items: center;
+        flex-grow: 1;
+        user-select: none;
+    }
+    &__author-avatar {
+        width: 30px;
+        height: 30px;
+        overflow: hidden;
+        border-radius: 50%;
+        background-position: center;
+        background-size: cover;
+        margin-right: 5px;
+        cursor: pointer;
+    }
+    &__author-name {
+        font-size: 1.5rem;
+        font-weight: 300;
+        cursor: pointer;
+    }
+    &__date {
+        color: #bbb;
+        font-size: 1.1rem;
+    }
+    &__title {
+        font-size: 2rem;
+        font-weight: 700;
+        padding-bottom: 10px;
+        cursor: pointer;
+    }
+    &__content {
+        user-select: none;
+        img {
+            width: 100%;
+            cursor: pointer;
+        }
+    }
+    &__actions {
+        display: flex;
+        flex-grow: 1;
+        justify-content: flex-end;
+    }
+    &__summary {
+        display: flex;
+        font-size: 1.7rem;
+    }
+    &__action {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        margin: 7px 5px;
+        border: 1px solid white;
+        width: 50px;
+        height: 35px;
+        &:hover {
+            border-color: #bbb;
+            color: #bbb;
+        }
+    }
+    &__points {
+        user-select: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 7px 0;
+        border: 1px solid white;
+        height: 35px;
+        width: 140px;
+    }
+}
+
+.recomended {
+    position: relative;
+    width: 100%;
+    padding-top: 56%;
+    background-position: top center;
+    background-size: cover;
+    margin-bottom: 30px;
+    &__title {
+        position: absolute;
+        left: 0;
+        bottom: 0;
+        width: 100%;
+        background-color: rgba(0, 0, 0, 0.9);
+        font-size: 1.4rem;
+        padding: 5px 10px;
+        font-weight: 700;
+        cursor: pointer;
+    }
+}

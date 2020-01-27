@@ -4,6 +4,7 @@ import './tools/fontawesome-free-5.12.0-web/css/all.css';
 
 import Navigation from './navigation/Navigation';
 import Auth from './components/Auth/Auth';
+import Home from './components/Home/Home';
 
 const App = () => {
     const [openNavigation, setOpenNavigation] = useState(null);
@@ -17,6 +18,7 @@ const App = () => {
                     setOpenNavigation={setOpenNavigation}
                 />
             )}
+            <Home />
         </>
     );
 };

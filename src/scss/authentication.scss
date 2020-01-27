@@ -64,6 +64,7 @@
         user-select: none;
     }
     &__change {
+        width: fit-content;
         font-size: 1.2rem;
         color: #777;
         font-weight: 700;
@@ -80,5 +81,6 @@
         height: 100%;
         background-color: rgba(0, 0, 0, 0.5);
         overflow-y: scroll;
+        z-index: 20;
     }
 }

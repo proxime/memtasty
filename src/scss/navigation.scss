@@ -6,6 +6,7 @@
     background-color: black;
     color: white;
     transition: transform 0.2s linear;
+    z-index: 10;
     &-hidden {
         transform: translateY(-36px);
     }

@@ -12,8 +12,13 @@ html {
 body {
     height: 300vh;
     background-color: #272727;
+    overflow-x: hidden;
 }
 
 .disabled {
     overflow-y: hidden;
+}
+
+#root {
+    width: 100vw;
 }
