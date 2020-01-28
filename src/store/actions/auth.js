@@ -8,6 +8,7 @@ export const createAccount = (email, password) => async () => {
         };
     } catch (err) {
         let error = '';
+        console.log(err);
         switch (err.code) {
             case 'auth/email-already-in-use':
                 error = { email: 'Adres email jest już w użyciu' };

@@ -107,8 +107,8 @@ const RegisterWindow = ({ setOpenNavigation, scrollWhenChange, history }) => {
                 ...prevState,
                 other: 'Coś poszło nie tak',
             }));
-            setIsLoading(false);
         }
+        setIsLoading(false);
     };
 
     return (

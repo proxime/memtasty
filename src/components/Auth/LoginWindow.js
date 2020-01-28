@@ -79,8 +79,8 @@ const LoginWindow = ({ setOpenNavigation, scrollWhenChange }) => {
                 ...prevState,
                 other: 'Coś poszło nie tak',
             }));
-            setIsLoading(false);
         }
+        setIsLoading(false);
     };
 
     return (

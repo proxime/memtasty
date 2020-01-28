@@ -5,7 +5,7 @@ const NavigationTopBar = () => {
     return (
         <div className="navigation-top-bar">
             <div className="navigation-top-bar__categories">
-                <Link to="/" exact className="navigation-top-bar__item">
+                <Link to="/" className="navigation-top-bar__item">
                     Strona Główna
                 </Link>
                 <a href="#!" className="navigation-top-bar__item">

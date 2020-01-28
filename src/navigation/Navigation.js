@@ -34,7 +34,7 @@ const Navigation = ({ setOpenNavigation }) => {
         >
             <NavigationTopBar />
             <div className="navigation__container">
-                <Link to="/" exact className="navigation__title">
+                <Link to="/" className="navigation__title">
                     MemTasty
                 </Link>
                 <div className="navigation__tools"></div>
