@@ -56,11 +56,28 @@
         cursor: pointer;
     }
     &__content {
+        position: relative;
         user-select: none;
+        max-height: 2000px;
+        overflow: hidden;
         img {
             width: 100%;
             cursor: pointer;
         }
+    }
+    &__content-expanded {
+        max-height: none;
+    }
+    &__show-more {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        background-color: rgba(0, 0, 0, 0.9);
+        padding: 10px;
+        cursor: pointer;
+        font-size: 2rem;
+        text-align: center;
     }
     &__actions {
         display: flex;

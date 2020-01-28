@@ -12,6 +12,7 @@ const Input = props => {
                     onChange={props.onChange}
                     value={props.value}
                 />
+                <p className="authentication__input-error">{props.error}</p>
             </label>
         </div>
     );
