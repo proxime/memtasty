@@ -3,6 +3,9 @@ import { auth } from '../../firebaseConfig';
 export const createAccount = (email, password) => async () => {
     try {
         await auth.createUserWithEmailAndPassword(email, password);
+        return {
+            status: 'ok',
+        };
     } catch (err) {
         let error = '';
         switch (err.code) {
@@ -29,6 +32,9 @@ export const createAccount = (email, password) => async () => {
 export const login = (email, password) => async () => {
     try {
         await auth.signInWithEmailAndPassword(email, password);
+        return {
+            status: 'ok',
+        };
     } catch (err) {
         let error = '';
         switch (err.code) {

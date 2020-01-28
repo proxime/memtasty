@@ -1,8 +1,14 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import Element from '../Elements/Element';
-import RecomendedElement from '../Elements/RecomendedElement';
+import RecomendSection from '../Elements/RecomendSection';
 
 const Home = () => {
+    useEffect(() => {
+        return () => {
+            window.scrollTo(0, 0);
+        };
+    }, []);
+
     return (
         <div className="section">
             <div className="section__list">
@@ -31,14 +37,7 @@ const Home = () => {
                     type="image"
                 />
             </div>
-            <div className="section__recommended">
-                <RecomendedElement />
-                <RecomendedElement />
-                <RecomendedElement />
-                <RecomendedElement />
-                <RecomendedElement />
-                <RecomendedElement />
-            </div>
+            <RecomendSection />
         </div>
     );
 };

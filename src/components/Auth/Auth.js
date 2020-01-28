@@ -1,7 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import LoginWindow from './LoginWindow';
 import RegisterWindow from './RegisterWindow';
-import { useSelector } from 'react-redux';
 
 const Auth = ({ openNavigation, setOpenNavigation }) => {
     const authWindow = useRef(null);
@@ -25,12 +24,6 @@ const Auth = ({ openNavigation, setOpenNavigation }) => {
             behavior: 'smooth',
         });
     };
-
-    const auth = useSelector(state => state.auth);
-    if (auth.user) {
-        setOpenNavigation(null);
-        return null;
-    }
 
     return (
         <>

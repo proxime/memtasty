@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import NavigationSearch from './NavigationSearch';
 import UserPanel from './UserPanel';
 import NavigationTopBar from './NavigationTopBar';
+import { Link } from 'react-router-dom';
 
 const Navigation = ({ setOpenNavigation }) => {
     const [isHiddenNav, setIsHiddenNav] = useState(false);
@@ -33,7 +34,9 @@ const Navigation = ({ setOpenNavigation }) => {
         >
             <NavigationTopBar />
             <div className="navigation__container">
-                <div className="navigation__title">MemTasty</div>
+                <Link to="/" exact className="navigation__title">
+                    MemTasty
+                </Link>
                 <div className="navigation__tools"></div>
                 <NavigationSearch />
                 <UserPanel setOpenNavigation={setOpenNavigation} />

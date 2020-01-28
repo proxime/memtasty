@@ -4,8 +4,9 @@ import { useDispatch } from 'react-redux';
 import { createAccount } from '../../store/actions/auth';
 import validate from 'validate.js';
 import Spinner from '../Spinner';
+import { withRouter } from 'react-router-dom';
 
-const RegisterWindow = ({ setOpenNavigation, scrollWhenChange }) => {
+const RegisterWindow = ({ setOpenNavigation, scrollWhenChange, history }) => {
     const [formData, setFormData] = useState({
         email: '',
         password: '',
@@ -97,14 +98,17 @@ const RegisterWindow = ({ setOpenNavigation, scrollWhenChange }) => {
                     ...prevState,
                     ...res.error,
                 }));
+            } else {
+                setOpenNavigation(false);
+                history.push('/user');
             }
         } catch (err) {
             setValidateErrors(prevState => ({
                 ...prevState,
                 other: 'Coś poszło nie tak',
             }));
+            setIsLoading(false);
         }
-        setIsLoading(false);
     };
 
     return (
@@ -162,4 +166,4 @@ const RegisterWindow = ({ setOpenNavigation, scrollWhenChange }) => {
     );
 };
 
-export default RegisterWindow;
+export default withRouter(RegisterWindow);

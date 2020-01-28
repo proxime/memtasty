@@ -1,12 +1,13 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 const NavigationTopBar = () => {
     return (
         <div className="navigation-top-bar">
             <div className="navigation-top-bar__categories">
-                <a href="#!" className="navigation-top-bar__item">
+                <Link to="/" exact className="navigation-top-bar__item">
                     Strona Główna
-                </a>
+                </Link>
                 <a href="#!" className="navigation-top-bar__item">
                     Poczekalnia
                 </a>

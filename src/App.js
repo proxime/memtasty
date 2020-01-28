@@ -5,7 +5,8 @@ import 'video-react/dist/video-react.css';
 
 import Navigation from './navigation/Navigation';
 import Auth from './components/Auth/Auth';
-import Home from './components/Home/Home';
+import Routes from './components/Routes';
+import { BrowserRouter as Router } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import store from './store/store';
 import * as appListeners from './appListeners';
@@ -17,14 +18,16 @@ const App = () => {
 
     return (
         <Provider store={store}>
-            <Navigation setOpenNavigation={setOpenNavigation} />
-            {openNavigation && (
-                <Auth
-                    openNavigation={openNavigation}
-                    setOpenNavigation={setOpenNavigation}
-                />
-            )}
-            <Home />
+            <Router>
+                <Navigation setOpenNavigation={setOpenNavigation} />
+                {openNavigation && (
+                    <Auth
+                        openNavigation={openNavigation}
+                        setOpenNavigation={setOpenNavigation}
+                    />
+                )}
+                <Routes />
+            </Router>
         </Provider>
     );
 };

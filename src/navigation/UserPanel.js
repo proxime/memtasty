@@ -1,20 +1,31 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
-import { auth } from '../firebaseConfig';
+
+import { Link } from 'react-router-dom';
 
 const UserPanel = ({ setOpenNavigation }) => {
-    const authReducer = useSelector(state => state.auth);
-    const user = authReducer.user;
+    const auth = useSelector(state => state.auth);
+    const user = auth.user;
 
-    const logOut = async () => {
-        await auth.signOut();
-    };
+    if (auth.loading) {
+        return null;
+    }
 
     return (
         <div className="navigation__user-panel">
             {user ? (
-                <div className="navigation__logout" onClick={logOut}>
-                    Wyloguj się
+                <div className="navigation__authenticated">
+                    <Link
+                        className="navigation__avatar"
+                        style={{
+                            backgroundImage:
+                                'url(https://miscmedia-9gag-fun.9cache.com/images/thumbnail-facebook/1557376304.186_U5U7u5_100x100.jpg)',
+                        }}
+                        to="/user"
+                    />
+                    <div className="navigation__create">
+                        <i className="fas fa-plus"></i>
+                    </div>
                 </div>
             ) : (
                 <>

@@ -71,14 +71,16 @@ const LoginWindow = ({ setOpenNavigation, scrollWhenChange }) => {
                     ...prevState,
                     ...res.error,
                 }));
+            } else {
+                setOpenNavigation(false);
             }
         } catch (err) {
             setValidateErrors(prevState => ({
                 ...prevState,
                 other: 'Coś poszło nie tak',
             }));
+            setIsLoading(false);
         }
-        setIsLoading(false);
     };
 
     return (

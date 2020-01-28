@@ -11,8 +11,9 @@
     }
     &__recommended {
         flex-grow: 1;
-        max-width: 350px;
+        max-width: 320px;
         padding: 20px;
+        padding-right: 0;
     }
 }
 
