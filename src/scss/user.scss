@@ -31,6 +31,11 @@
             background-color: $primary-color;
         }
     }
+    &__title {
+        font-size: 4rem;
+        margin-bottom: 30px;
+        font-weight: 300;
+    }
     &__main {
         display: flex;
         align-items: center;
@@ -48,6 +53,12 @@
         font-size: 3rem;
         font-weight: 700;
         letter-spacing: 1px;
+        margin-bottom: 3px;
+    }
+    &__mail {
+        font-size: 1.1rem;
+        color: #ccc;
+        font-weight: 300;
     }
     &__desc {
         font-size: 1.4rem;
@@ -75,5 +86,107 @@
         width: 100%;
         min-height: 300px;
         background-color: #333;
+    }
+    &__settings-categories {
+        display: flex;
+    }
+    &__settings-category {
+        padding: 7px 20px;
+        font-size: 1.4rem;
+        font-weight: 500;
+        border: 1px solid white;
+        margin: 0 10px;
+        cursor: pointer;
+        user-select: none;
+        color: white;
+        text-decoration: none;
+        &.active {
+            color: $primary-color;
+            border-color: $primary-color;
+        }
+        &:first-child {
+            margin-left: 0;
+        }
+    }
+    &__settings-main {
+        padding-top: 30px;
+    }
+    &__profile-item {
+        margin-bottom: 20px;
+    }
+}
+
+.settings {
+    &__item {
+        margin-bottom: 30px;
+    }
+    &__title {
+        font-size: 1.3rem;
+        font-weight: 500;
+        margin-bottom: 7px;
+    }
+    &__avatar-container {
+        display: flex;
+    }
+    &__avatar {
+        width: 80px;
+        height: 80px;
+        border: 1px solid white;
+        margin-right: 20px;
+        background-position: center;
+        background-size: cover;
+    }
+    &__avatar-input {
+        font-size: 1.5rem;
+        cursor: pointer;
+        padding: 5px 0;
+        width: 130px;
+        text-align: center;
+        border: 1px solid white;
+        cursor: pointer;
+        user-select: none;
+    }
+    &__avatar-desc {
+        margin-top: 5px;
+        font-size: 1.1rem;
+    }
+    &__nick-input {
+        background-color: transparent;
+        border: white solid 1px;
+        outline: none;
+        color: white;
+        padding: 10px 15px;
+        font-size: 1.5rem;
+        width: 100%;
+        max-width: 400px;
+        font-weight: 300;
+    }
+    &__desc-input {
+        background-color: transparent;
+        border: white solid 1px;
+        outline: none;
+        color: white;
+        padding: 10px 15px;
+        font-size: 1.5rem;
+        width: 100%;
+        max-width: 400px;
+        height: 150px;
+        font-weight: 300;
+        resize: none;
+    }
+    &__button {
+        font-size: 1.4rem;
+        font-weight: 700;
+        cursor: pointer;
+        border: 1px solid $primary-color;
+        width: fit-content;
+        padding: 8px 25px;
+        color: $primary-color;
+        user-select: none;
+    }
+    &__error {
+        color: red;
+        font-size: 1.1rem;
+        margin-top: 3px;
     }
 }

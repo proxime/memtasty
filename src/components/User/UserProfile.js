@@ -1,23 +1,32 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { useSelector } from 'react-redux';
 
 const UserProfile = () => {
+    const user = useSelector(state => state.auth.user);
+
+    useEffect(() => {
+        return () => {
+            window.scrollTo(0, 0);
+        };
+    }, []);
+
     return (
         <div className="user__profile">
+            <div className="user__title">Mój profil</div>
             <div className="user__main">
                 <div
                     className="user__avatar"
                     style={{
-                        backgroundImage:
-                            'url(https://miscmedia-9gag-fun.9cache.com/images/thumbnail-facebook/1557376304.186_U5U7u5_100x100.jpg)',
+                        backgroundImage: `url(${user.avatar})`,
                     }}
                 ></div>
-                <div className="user__nick">Nick</div>
+                <div className="user__info">
+                    <div className="user__nick">{user.nick}</div>
+                    <div className="user__mail">{user.email}</div>
+                </div>
             </div>
             <div className="user__desc">
-                Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                Voluptas ex recusandae earum maiores odio, placeat assumenda
-                esse nemo vero libero aspernatur, adipisci doloremque quos ipsum
-                inventore, sed a enim! Modi.
+                {user.desc ? user.desc : 'Napisz coś o sobie'}
             </div>
             <div className="user__items">
                 <div className="user__select">

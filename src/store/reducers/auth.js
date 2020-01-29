@@ -18,6 +18,7 @@ export default (state = initState, action) => {
                     nick: payload.nick,
                     avatar: payload.avatar,
                     emailVerified: payload.emailVerified,
+                    desc: payload.desc,
                 },
                 loading: false,
             };

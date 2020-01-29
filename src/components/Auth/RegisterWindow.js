@@ -1,6 +1,5 @@
 import React, { useState, useCallback } from 'react';
 import AuthInput from './AuthInput';
-import { useDispatch } from 'react-redux';
 import { createAccount } from '../../store/actions/auth';
 import validate from 'validate.js';
 import Spinner from '../Spinner';
@@ -8,23 +7,20 @@ import { withRouter } from 'react-router-dom';
 
 const RegisterWindow = ({ setOpenNavigation, scrollWhenChange, history }) => {
     const [formData, setFormData] = useState({
+        nick: '',
         email: '',
         password: '',
-        password2: '',
     });
 
     const [validateErrors, setValidateErrors] = useState({
         email: '',
         password: '',
-        password2: '',
         other: '',
     });
 
     const [isLoading, setIsLoading] = useState(false);
 
-    const { email, password, password2 } = formData;
-
-    const dispatch = useDispatch();
+    const { email, password, nick } = formData;
 
     const handleChangeData = useCallback(
         e => {
@@ -45,16 +41,16 @@ const RegisterWindow = ({ setOpenNavigation, scrollWhenChange, history }) => {
     const handleRegisterUser = async e => {
         e.preventDefault();
         setValidateErrors({
+            nick: '',
             email: '',
             password: '',
-            password2: '',
             other: '',
         });
         let error = false;
-        if (password !== password2) {
+        if (nick.length < 4 || nick.length > 12) {
             setValidateErrors(prevState => ({
                 ...prevState,
-                password2: 'Hasła nie są identyczne!',
+                nick: 'Nick musi zawierać od 4 do 12 znaków',
             }));
             error = true;
         }
@@ -92,12 +88,13 @@ const RegisterWindow = ({ setOpenNavigation, scrollWhenChange, history }) => {
 
         try {
             setIsLoading(true);
-            const res = await dispatch(createAccount(email, password));
+            const res = await createAccount(email, password, nick);
             if (res.status === 'error') {
                 setValidateErrors(prevState => ({
                     ...prevState,
                     ...res.error,
                 }));
+                setIsLoading(false);
             } else {
                 setOpenNavigation(false);
                 history.push('/user');
@@ -107,8 +104,8 @@ const RegisterWindow = ({ setOpenNavigation, scrollWhenChange, history }) => {
                 ...prevState,
                 other: 'Coś poszło nie tak',
             }));
+            setIsLoading(false);
         }
-        setIsLoading(false);
     };
 
     return (
@@ -126,6 +123,15 @@ const RegisterWindow = ({ setOpenNavigation, scrollWhenChange, history }) => {
                     noValidate
                 >
                     <AuthInput
+                        text="Nick"
+                        type="text"
+                        name="nick"
+                        onChange={handleChangeData}
+                        value={nick}
+                        error={validateErrors.nick}
+                        firstInput
+                    />
+                    <AuthInput
                         text="Email"
                         type="email"
                         name="email"
@@ -140,14 +146,6 @@ const RegisterWindow = ({ setOpenNavigation, scrollWhenChange, history }) => {
                         onChange={handleChangeData}
                         value={password}
                         error={validateErrors.password}
-                    />
-                    <AuthInput
-                        text="Powtórz Hasło"
-                        type="password"
-                        name="password2"
-                        onChange={handleChangeData}
-                        value={password2}
-                        error={validateErrors.password2}
                     />
                     <div className="authentication__button-container">
                         <button className="authentication__button">

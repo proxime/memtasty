@@ -71,6 +71,7 @@ const LoginWindow = ({ setOpenNavigation, scrollWhenChange }) => {
                     ...prevState,
                     ...res.error,
                 }));
+                setIsLoading(false);
             } else {
                 setOpenNavigation(false);
             }
@@ -79,8 +80,8 @@ const LoginWindow = ({ setOpenNavigation, scrollWhenChange }) => {
                 ...prevState,
                 other: 'Coś poszło nie tak',
             }));
+            setIsLoading(false);
         }
-        setIsLoading(false);
     };
 
     return (
@@ -104,6 +105,7 @@ const LoginWindow = ({ setOpenNavigation, scrollWhenChange }) => {
                         onChange={handleChangeData}
                         value={email}
                         error={validateErrors.email}
+                        firstInput
                     />
                     <AuthInput
                         text="Hasło"

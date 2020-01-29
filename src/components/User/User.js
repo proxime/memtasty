@@ -5,7 +5,7 @@ import { useSelector } from 'react-redux';
 import Spinner from '../Spinner';
 import { Route } from 'react-router-dom';
 import UserProfile from './UserProfile';
-import UserNavigation from './UserNavigation';
+import Settings from './Settings';
 
 const User = () => {
     const auth = useSelector(state => state.auth);
@@ -30,8 +30,8 @@ const User = () => {
                     </div>
                 ) : (
                     <div className="user">
-                        <UserNavigation />
                         <Route path="/user" exact component={UserProfile} />
+                        <Route path="/user/settings" component={Settings} />
                     </div>
                 )}
             </div>
