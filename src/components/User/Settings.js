@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { NavLink, Route } from 'react-router-dom';
 
 import SettingsProfile from './SettingsProfile';
+import SettingsAccount from './SettingsAccount';
 
 const Settings = () => {
     useEffect(() => {
@@ -28,19 +29,17 @@ const Settings = () => {
                 >
                     Konto
                 </NavLink>
-                <NavLink
-                    to="/user/settings/password"
-                    className="user__settings-category"
-                    exact
-                >
-                    Hasło
-                </NavLink>
             </div>
             <div className="user__settings-main">
                 <Route
                     path="/user/settings"
                     exact
                     component={SettingsProfile}
+                />
+                <Route
+                    path="/user/settings/account"
+                    exact
+                    component={SettingsAccount}
                 />
             </div>
         </div>

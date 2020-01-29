@@ -1,4 +1,10 @@
-import { auth, database, storage } from '../../firebaseConfig';
+import { auth, database, storage, firebase } from '../../firebaseConfig';
+import {
+    SET_SETTING_LOAING,
+    CHANGE_PROFILE_DATA,
+    SET_SETTING_PROGGRESS,
+    CHANGE_ACCOUNT_DATA,
+} from './types';
 
 export const createAccount = async (email, password, nick) => {
     try {
@@ -25,12 +31,9 @@ export const createAccount = async (email, password, nick) => {
 
         // Push user to database
         const userData = {
-            uid: res.user.uid,
-            email: res.user.email,
             nick,
             avatar: null,
-            emailVerified: res.user.emailVerified,
-            status: 'normal',
+            desc: '',
         };
         await database.ref('users/' + res.user.uid).set(userData);
 
@@ -92,42 +95,146 @@ export const login = (email, password) => async () => {
     }
 };
 
-export const changeProfileData = (nick, desc, avatar) => async dispatch => {
+export const changeProfileData = (
+    nick,
+    desc,
+    avatar,
+    setAvatarError
+) => async dispatch => {
+    dispatch({ type: SET_SETTING_LOAING, payload: true });
+
     const user = auth.currentUser;
-    console.log(user);
 
-    //Check if nick is available
-    let users = await database.ref('/users').once('value');
-    users = users.val();
+    try {
+        //Check if nick is available
+        let users = await database.ref('/users').once('value');
+        users = users.val();
 
-    let enabled = true;
-    for (const key in users) {
-        if (users[key].nick === nick) {
-            if (key !== user.uid) {
-                enabled = false;
+        let enabled = true;
+        for (const key in users) {
+            if (users[key].nick === nick) {
+                if (key !== user.uid) {
+                    enabled = false;
+                }
+                break;
             }
-            break;
         }
-    }
 
-    if (!enabled) {
+        if (!enabled) {
+            dispatch({ type: SET_SETTING_LOAING, payload: false });
+            return {
+                status: 'error',
+                error: { nick: 'Ten nick jest już zajęty' },
+            };
+        }
+
+        const data = {
+            nick,
+            desc,
+        };
+        if (avatar) {
+            const upload = storage.ref(`/avatars/${user.uid}`).put(avatar);
+
+            upload.on(
+                'state_changed',
+                snapshot => {
+                    const progress =
+                        (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                    dispatch({
+                        type: SET_SETTING_PROGGRESS,
+                        payload: progress,
+                    });
+                },
+                err => {
+                    dispatch({ type: SET_SETTING_LOAING, payload: false });
+                    setAvatarError(
+                        'Plik może zawierać maksymalnie 5MB, oraz musi być obrazem'
+                    );
+                },
+                async () => {
+                    try {
+                        const avatarUrl = await storage
+                            .ref(`/avatars/${user.uid}`)
+                            .getDownloadURL();
+                        data.avatar = avatarUrl;
+                        await database.ref(`/users/${user.uid}`).update(data);
+                        dispatch({
+                            type: CHANGE_PROFILE_DATA,
+                            payload: data,
+                        });
+                    } catch (err) {
+                        dispatch({ type: SET_SETTING_LOAING, payload: false });
+                    }
+                }
+            );
+        } else {
+            await database.ref(`/users/${user.uid}`).update(data);
+            dispatch({
+                type: CHANGE_PROFILE_DATA,
+                payload: data,
+            });
+        }
+        return {
+            status: 'ok',
+        };
+    } catch (err) {
+        dispatch({ type: SET_SETTING_LOAING, payload: false });
         return {
             status: 'error',
-            error: { nick: 'Ten nick jest już zajęty' },
+            error: { other: 'Coś poszło nie tak' },
         };
     }
+};
 
-    const data = {
-        nick,
-        desc,
-    };
-    if (avatar) {
-        await storage.ref(`/avatars/${user.uid}`).put(avatar);
-        const avatarUrl = await storage
-            .ref(`/avatars/${user.uid}`)
-            .getDownloadURL();
-        data.avatar = avatarUrl;
+export const changeAccountData = (
+    email,
+    password,
+    newPassword
+) => async dispatch => {
+    dispatch({ type: SET_SETTING_LOAING, payload: true });
+    try {
+        const user = auth.currentUser;
+        const credential = firebase.auth.EmailAuthProvider.credential(
+            user.email,
+            password
+        );
+
+        await user.reauthenticateWithCredential(credential);
+
+        if (email !== user.email) {
+            await user.updateEmail(email);
+        }
+        if (newPassword && password) {
+            await user.updatePassword(newPassword);
+        }
+        dispatch({ type: CHANGE_ACCOUNT_DATA, payload: email });
+
+        return {
+            status: 'ok',
+        };
+    } catch (err) {
+        dispatch({ type: SET_SETTING_LOAING, payload: false });
+        let error;
+        switch (err.code) {
+            case 'auth/wrong-password':
+                error = { password: 'Wprowadziłeś złe hasło' };
+                break;
+            case 'auth/weak-password':
+                error = { newPassword: 'Hasło musi zawierać minimum 6 znaków' };
+                break;
+            case 'auth/invalid-email':
+                error = { email: 'Wprowadź prawidłowy email' };
+                break;
+            case 'auth/email-already-in-use':
+                error = { email: 'Ten email jest już zajęty' };
+                break;
+            default:
+                error = { other: 'Coś poszło nie tak' };
+                break;
+        }
+        return {
+            status: 'error',
+            error,
+        };
     }
-
-    database.ref(`/users/${user.uid}`).update(data);
 };

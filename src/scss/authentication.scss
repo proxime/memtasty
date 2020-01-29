@@ -8,6 +8,7 @@
     &__close-container {
         display: flex;
         justify-content: flex-end;
+        color: black;
     }
     &__close {
         cursor: pointer;
@@ -22,6 +23,7 @@
         font-weight: 700;
         padding: 10px 0;
         letter-spacing: 0.7px;
+        color: black;
     }
     &__desc {
         font-size: 1.3rem;

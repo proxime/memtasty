@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { useSelector } from 'react-redux';
+import { Link } from 'react-router-dom';
 
 const UserProfile = () => {
     const user = useSelector(state => state.auth.user);
@@ -26,7 +27,11 @@ const UserProfile = () => {
                 </div>
             </div>
             <div className="user__desc">
-                {user.desc ? user.desc : 'Napisz coś o sobie'}
+                {user.desc ? (
+                    user.desc
+                ) : (
+                    <Link to="/user/settings">Napisz coś o sobie</Link>
+                )}
             </div>
             <div className="user__items">
                 <div className="user__select">

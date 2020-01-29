@@ -57,12 +57,15 @@
     }
     &__mail {
         font-size: 1.1rem;
-        color: #ccc;
+        color: #bbb;
         font-weight: 300;
     }
     &__desc {
         font-size: 1.4rem;
         margin-bottom: 25px;
+        a {
+            color: #bbb;
+        }
     }
     &__select {
         display: flex;
@@ -70,15 +73,17 @@
         p {
             cursor: pointer;
             font-size: 1.4rem;
-            padding: 5px 12px;
+            padding: 7px 15px;
             margin: 0 5px;
-            background-color: #333;
             user-select: none;
+            border: 1px solid white;
+            font-weight: 500;
             &:first-child {
                 margin-left: 0;
             }
             &.active {
-                background-color: $primary-color;
+                border-color: $primary-color;
+                color: $primary-color;
             }
         }
     }
@@ -150,7 +155,9 @@
         margin-top: 5px;
         font-size: 1.1rem;
     }
-    &__nick-input {
+    &__nick-input,
+    &__email-input,
+    &__password-input {
         background-color: transparent;
         border: white solid 1px;
         outline: none;
@@ -174,6 +181,9 @@
         font-weight: 300;
         resize: none;
     }
+    &__buttons {
+        display: flex;
+    }
     &__button {
         font-size: 1.4rem;
         font-weight: 700;
@@ -183,10 +193,62 @@
         padding: 8px 25px;
         color: $primary-color;
         user-select: none;
+        margin-right: 20px;
+    }
+    &__button-reset {
+        font-size: 1.4rem;
+        font-weight: 700;
+        cursor: pointer;
+        border: 1px solid white;
+        width: fit-content;
+        padding: 8px 25px;
+        color: white;
+        user-select: none;
     }
     &__error {
         color: red;
         font-size: 1.1rem;
         margin-top: 3px;
+    }
+    &__error-other {
+        color: red;
+        font-size: 1.4rem;
+        margin-top: 8px;
+    }
+    &__avatar-error {
+        color: red;
+        font-size: 1.1rem;
+        margin-top: 4px;
+    }
+    &__progress-bar {
+        position: relative;
+        font-size: 1.6rem;
+        font-weight: 500;
+        text-align: center;
+        border: 1px solid white;
+        padding: 10px 0;
+        p {
+            position: relative;
+            z-index: 2;
+        }
+    }
+    &__progress-bar-active {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: $primary-color;
+    }
+    &__change-paswword {
+        font-size: 1.3rem;
+        font-weight: 500;
+        cursor: pointer;
+        margin-bottom: 40px;
+        width: fit-content;
+        user-select: none;
+        &:hover {
+            text-decoration: underline;
+        }
     }
 }

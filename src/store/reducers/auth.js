@@ -1,8 +1,17 @@
-import { SET_USER, UNSET_USER } from '../actions/types';
+import {
+    SET_USER,
+    UNSET_USER,
+    SET_SETTING_LOAING,
+    CHANGE_PROFILE_DATA,
+    SET_SETTING_PROGGRESS,
+    CHANGE_ACCOUNT_DATA,
+} from '../actions/types';
 
 const initState = {
     user: null,
     loading: true,
+    settingsLoading: false,
+    changeProggress: 0,
 };
 
 export default (state = initState, action) => {
@@ -27,6 +36,35 @@ export default (state = initState, action) => {
                 ...state,
                 user: null,
                 loading: false,
+            };
+        case SET_SETTING_LOAING:
+            return {
+                ...state,
+                settingsLoading: payload,
+            };
+        case CHANGE_PROFILE_DATA:
+            return {
+                ...state,
+                settingsLoading: false,
+                user: {
+                    ...state.user,
+                    ...payload,
+                },
+                changeProggress: 0,
+            };
+        case CHANGE_ACCOUNT_DATA:
+            return {
+                ...state,
+                settingsLoading: false,
+                user: {
+                    ...state.user,
+                    ...payload,
+                },
+            };
+        case SET_SETTING_PROGGRESS:
+            return {
+                ...state,
+                changeProggress: payload,
             };
         default:
             return state;

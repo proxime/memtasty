@@ -23,7 +23,7 @@ export const authStateListener = () => {
                     email: user.email,
                     avatar,
                     emailVerified: user.emailVerified,
-                    desc: thisUser.desc ? thisUser.desc : null,
+                    desc: thisUser.desc ? thisUser.desc : '',
                 },
             });
         } else {

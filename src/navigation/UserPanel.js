@@ -17,10 +17,10 @@ const UserPanel = ({ setOpenNavigation }) => {
             {user ? (
                 <div className="navigation__authenticated">
                     <Link className="navigation__profile" to="/user">
-                        <i class="fas fa-user"></i>
+                        <i className="fas fa-user"></i>
                     </Link>
                     <Link className="navigation__settings" to="/user/settings">
-                        <i class="fas fa-cog"></i>
+                        <i className="fas fa-cog"></i>
                     </Link>
                     <div className="navigation__create">
                         <i className="fas fa-plus"></i>
