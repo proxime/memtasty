@@ -22,9 +22,9 @@ const UserPanel = ({ setOpenNavigation }) => {
                     <Link className="navigation__settings" to="/user/settings">
                         <i className="fas fa-cog"></i>
                     </Link>
-                    <div className="navigation__create">
+                    <Link className="navigation__create" to="/create">
                         <i className="fas fa-plus"></i>
-                    </div>
+                    </Link>
                     <div
                         className="navigation__logout"
                         onClick={() => auth.signOut()}

@@ -8,9 +8,9 @@ const NavigationTopBar = () => {
                 <Link to="/" className="navigation-top-bar__item">
                     Strona Główna
                 </Link>
-                <a href="#!" className="navigation-top-bar__item">
+                <Link to="/waiting" className="navigation-top-bar__item">
                     Poczekalnia
-                </a>
+                </Link>
                 <a href="#!" className="navigation-top-bar__item">
                     Losowe
                 </a>

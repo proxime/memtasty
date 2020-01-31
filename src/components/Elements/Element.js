@@ -4,10 +4,11 @@ import ElementSummary from './ElementSummary';
 import ElementImage from './ElementImage';
 import ElementVideo from './ElementVideo';
 
-const Element = ({ image, type }) => {
+const Element = ({ post }) => {
     const renderContent = () => {
-        if (type === 'image') return <ElementImage image={image} />;
-        if (type === 'video') return <ElementVideo video={image} />;
+        if (post.data.type === 'video/mp4')
+            return <ElementVideo video={post.data.url} />;
+        else return <ElementImage image={post.data.url} />;
     };
 
     return (
@@ -25,7 +26,7 @@ const Element = ({ image, type }) => {
                 </div>
                 <div className="element__date">10 godzin temu</div>
             </div>
-            <div className="element__title">Tytuł</div>
+            <div className="element__title">{post.data.title}</div>
             {renderContent()}
             <ElementSummary />
         </div>
