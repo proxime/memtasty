@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import AuthInput from './AuthInput';
 import { createAccount } from '../../store/actions/auth';
 import validate from 'validate.js';
@@ -21,6 +21,14 @@ const RegisterWindow = ({ setOpenNavigation, scrollWhenChange, history }) => {
     const [isLoading, setIsLoading] = useState(false);
 
     const { email, password, nick } = formData;
+
+    useEffect(() => {
+        document.querySelector('body').classList.add('disabled');
+
+        return () => {
+            document.querySelector('body').classList.remove('disabled');
+        };
+    }, []);
 
     const handleChangeData = useCallback(
         e => {

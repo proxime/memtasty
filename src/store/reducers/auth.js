@@ -5,6 +5,7 @@ import {
     CHANGE_PROFILE_DATA,
     SET_SETTING_PROGGRESS,
     CHANGE_ACCOUNT_DATA,
+    TOGGLE_LOGIN_WINDOW,
 } from '../actions/types';
 
 const initState = {
@@ -12,6 +13,7 @@ const initState = {
     loading: true,
     settingsLoading: false,
     changeProggress: 0,
+    openWinow: null,
 };
 
 export default (state = initState, action) => {
@@ -65,6 +67,11 @@ export default (state = initState, action) => {
             return {
                 ...state,
                 changeProggress: payload,
+            };
+        case TOGGLE_LOGIN_WINDOW:
+            return {
+                ...state,
+                openWinow: payload,
             };
         default:
             return state;

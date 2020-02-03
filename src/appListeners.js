@@ -1,5 +1,5 @@
 import { auth, database, storage } from './firebaseConfig';
-import { SET_USER, UNSET_USER } from './store/actions/types';
+import { SET_USER, UNSET_USER, GET_USER_LIKES } from './store/actions/types';
 import store from './store/store';
 
 export const authStateListener = () => {
@@ -10,22 +10,31 @@ export const authStateListener = () => {
                 .once('value');
             thisUser = thisUser.val();
 
-            // Check if avatar exists, else get the default
-            const avatar = thisUser.avatar
-                ? thisUser.avatar
-                : await storage.ref('/avatars/default.jpg').getDownloadURL();
-
             store.dispatch({
                 type: SET_USER,
                 payload: {
                     id: user.uid,
                     nick: thisUser.nick,
                     email: user.email,
-                    avatar,
+                    avatar: thisUser.avatar,
                     emailVerified: user.emailVerified,
                     desc: thisUser.desc ? thisUser.desc : '',
                 },
             });
+
+            database
+                .ref(`/users/${user.uid}/likes`)
+                .once('value', snapshopt => {
+                    const data = snapshopt.val();
+                    const likes = [];
+                    for (const key in data) {
+                        likes.push(data[key]);
+                    }
+                    store.dispatch({
+                        type: GET_USER_LIKES,
+                        payload: likes,
+                    });
+                });
         } else {
             store.dispatch({
                 type: UNSET_USER,

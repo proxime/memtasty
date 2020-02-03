@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import AuthInput from './AuthInput';
 import { useDispatch } from 'react-redux';
 import { login } from '../../store/actions/auth';
@@ -21,6 +21,14 @@ const LoginWindow = ({ setOpenNavigation, scrollWhenChange }) => {
     const { email, password } = formData;
 
     const dispatch = useDispatch();
+
+    useEffect(() => {
+        document.querySelector('body').classList.add('disabled');
+
+        return () => {
+            document.querySelector('body').classList.remove('disabled');
+        };
+    }, []);
 
     const handleChangeData = useCallback(
         e => {

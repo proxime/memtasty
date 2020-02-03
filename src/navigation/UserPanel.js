@@ -1,16 +1,22 @@
 import React from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
+import { toggleLoginWindow } from '../store/actions/auth';
 import { auth } from '../firebaseConfig';
-
 import { Link } from 'react-router-dom';
 
-const UserPanel = ({ setOpenNavigation }) => {
+const UserPanel = () => {
     const authState = useSelector(state => state.auth);
     const user = authState.user;
+
+    const dispatch = useDispatch();
 
     if (authState.loading) {
         return null;
     }
+
+    const setOpenNavigation = window => {
+        dispatch(toggleLoginWindow(window));
+    };
 
     return (
         <div className="navigation__user-panel">

@@ -4,7 +4,7 @@ import UserPanel from './UserPanel';
 import NavigationTopBar from './NavigationTopBar';
 import { Link } from 'react-router-dom';
 
-const Navigation = ({ setOpenNavigation }) => {
+const Navigation = () => {
     const [isHiddenNav, setIsHiddenNav] = useState(false);
     const navigationEl = useRef(null);
 
@@ -39,7 +39,7 @@ const Navigation = ({ setOpenNavigation }) => {
                 </Link>
                 <div className="navigation__tools"></div>
                 <NavigationSearch />
-                <UserPanel setOpenNavigation={setOpenNavigation} />
+                <UserPanel />
             </div>
         </nav>
     );

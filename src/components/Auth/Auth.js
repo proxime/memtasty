@@ -1,18 +1,16 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useRef } from 'react';
 import LoginWindow from './LoginWindow';
 import RegisterWindow from './RegisterWindow';
+import { useDispatch, useSelector } from 'react-redux';
+import { toggleLoginWindow } from '../../store/actions/auth';
 
-const Auth = ({ openNavigation, setOpenNavigation }) => {
+const Auth = () => {
     const authWindow = useRef(null);
     const authPopup = useRef(null);
 
-    useEffect(() => {
-        document.querySelector('body').classList.add('disabled');
+    const openNavigation = useSelector(state => state.auth.openWinow);
 
-        return () => {
-            document.querySelector('body').classList.remove('disabled');
-        };
-    }, []);
+    const dispatch = useDispatch();
 
     const handleCloseWindow = e => {
         if (e.target === authPopup.current) setOpenNavigation(null);
@@ -24,6 +22,12 @@ const Auth = ({ openNavigation, setOpenNavigation }) => {
             behavior: 'smooth',
         });
     };
+
+    const setOpenNavigation = window => {
+        dispatch(toggleLoginWindow(window));
+    };
+
+    if (!openNavigation) return null;
 
     return (
         <>

@@ -4,7 +4,15 @@ import {
     CHANGE_PROFILE_DATA,
     SET_SETTING_PROGGRESS,
     CHANGE_ACCOUNT_DATA,
+    TOGGLE_LOGIN_WINDOW,
 } from './types';
+
+export const toggleLoginWindow = window => dispatch => {
+    dispatch({
+        type: TOGGLE_LOGIN_WINDOW,
+        payload: window,
+    });
+};
 
 export const createAccount = async (email, password, nick) => {
     try {
@@ -28,11 +36,13 @@ export const createAccount = async (email, password, nick) => {
 
         //  Try create account
         const res = await auth.createUserWithEmailAndPassword(email, password);
-
+        const avatar = await storage
+            .ref('/avatars/default.jpg')
+            .getDownloadURL();
         // Push user to database
         const userData = {
             nick,
-            avatar: null,
+            avatar,
             desc: '',
         };
         await database.ref('users/' + res.user.uid).set(userData);

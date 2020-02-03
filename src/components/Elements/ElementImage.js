@@ -1,12 +1,18 @@
 import React, { useState, useRef } from 'react';
+import { withRouter } from 'react-router-dom';
 
-const ElementImage = ({ image }) => {
+const ElementImage = ({ image, single, id, history }) => {
     const [isCorrectHeight, setIsCorrectHeight] = useState(true);
     const [isImageExpanded, setIsImageExpanded] = useState(false);
     const imageEl = useRef(null);
 
     const handleLoadImage = () => {
         if (imageEl.current.height > 2000) setIsCorrectHeight(false);
+    };
+
+    const handleOpenSinglePost = () => {
+        if (single) return;
+        history.push(`/post/${id}`);
     };
 
     return (
@@ -21,6 +27,8 @@ const ElementImage = ({ image }) => {
                 alt=""
                 ref={imageEl}
                 onLoad={handleLoadImage}
+                className={single ? 'single' : ''}
+                onClick={handleOpenSinglePost}
             />
             {!isCorrectHeight && !isImageExpanded && (
                 <div
@@ -34,4 +42,4 @@ const ElementImage = ({ image }) => {
     );
 };
 
-export default ElementImage;
+export default withRouter(ElementImage);

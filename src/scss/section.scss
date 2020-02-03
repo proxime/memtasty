@@ -85,6 +85,8 @@
         font-size: 1.5rem;
         font-weight: 300;
         cursor: pointer;
+        color: white;
+        text-decoration: none;
     }
     &__date {
         color: #bbb;
@@ -93,8 +95,14 @@
     &__title {
         font-size: 2rem;
         font-weight: 700;
-        padding-bottom: 10px;
+        padding-bottom: 15px;
         cursor: pointer;
+        display: block;
+        color: white;
+        text-decoration: none;
+        &.single {
+            cursor: default;
+        }
     }
     &__content {
         position: relative;
@@ -104,6 +112,9 @@
         img {
             width: 100%;
             cursor: pointer;
+            &.single {
+                cursor: default;
+            }
         }
     }
     &__video-content {
@@ -155,6 +166,11 @@
             border-color: #bbb;
             color: #bbb;
         }
+        &.active {
+            border-color: $primary-color;
+            color: $primary-color;
+            width: 110px;
+        }
     }
     &__points {
         user-select: none;
@@ -185,5 +201,179 @@
         padding: 5px 10px;
         font-weight: 700;
         cursor: pointer;
+    }
+}
+
+.comments {
+    margin-top: 25px;
+    &__add-container {
+        display: flex;
+        margin-bottom: 20px;
+    }
+    &__add-avatar {
+        width: 65px;
+        height: 65px;
+        background-position: center;
+        background-size: cover;
+        border-radius: 50%;
+        margin-right: 15px;
+    }
+    &__add-input {
+        flex-grow: 1;
+        textarea {
+            width: 100%;
+            resize: none;
+            min-height: 70px;
+            height: auto;
+            background-color: transparent;
+            outline: none;
+            color: white;
+            padding: 10px;
+            font-size: 1.4rem;
+        }
+        button {
+            background-color: $primary-color;
+            border: none;
+            color: white;
+        }
+    }
+    &__add-buttons {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        padding: 5px 0;
+        flex-wrap: wrap;
+    }
+    &__error {
+        width: 100%;
+        text-align: right;
+        padding-top: 5px;
+        color: red;
+        font-size: 1.1rem;
+    }
+    &__add-button {
+        cursor: pointer;
+        font-size: 1.3rem;
+        font-weight: 700;
+        margin-right: 10px;
+        padding: 7px 10px;
+        user-select: none;
+    }
+    &__login {
+        font-size: 1.5rem;
+        p {
+            color: $primary-color;
+            text-decoration: none;
+            display: inline;
+            cursor: pointer;
+            &:hover {
+                text-decoration: underline;
+            }
+        }
+    }
+}
+
+.comment {
+    margin-bottom: 25px;
+    &__main {
+        display: flex;
+    }
+    &__top {
+        display: flex;
+        width: 100%;
+    }
+    &__time {
+        flex-grow: 1;
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        color: #bbb;
+        font-size: 1.1rem;
+    }
+    &__avatar {
+        width: 55px;
+        height: 55px;
+        background-position: center;
+        background-size: cover;
+        border-radius: 50%;
+        margin-right: 15px;
+        flex-shrink: 0;
+        cursor: pointer;
+    }
+    &__avatar-small {
+        width: 35px;
+        height: 35px;
+        background-position: center;
+        background-size: cover;
+        border-radius: 50%;
+        margin-right: 15px;
+        flex-shrink: 0;
+        margin-left: 20px;
+        cursor: pointer;
+    }
+    &__main-items {
+        padding: 6px 0;
+        width: 100%;
+    }
+    &__user {
+        font-size: 1.5rem;
+        font-weight: 700;
+        cursor: pointer;
+        margin-bottom: 5px;
+        color: white;
+        text-decoration: none;
+        display: block;
+        &:hover {
+            text-decoration: underline;
+        }
+    }
+    &__text {
+        font-size: 1.3rem;
+        margin-bottom: 5px;
+    }
+    &__summary {
+        display: flex;
+        font-size: 1.2rem;
+    }
+    &__reply {
+        color: #bbb;
+        cursor: pointer;
+        &:hover {
+            text-decoration: underline;
+        }
+    }
+    &__actions {
+        flex-grow: 1;
+        display: flex;
+        justify-content: flex-end;
+    }
+    &__points {
+        padding: 4px 0;
+        width: 50px;
+        border: 1px solid white;
+        text-align: center;
+        font-weight: 700;
+        margin-right: 10px;
+    }
+    &__plus,
+    &__minus {
+        cursor: pointer;
+        height: 100%;
+        width: 40px;
+        border: 1px solid white;
+        margin-right: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        &:last-child {
+            margin-right: 0;
+        }
+    }
+    &__replies {
+        border-left: 1px solid white;
+        margin-left: 25px;
+    }
+    &__answer {
+        margin-bottom: 5px;
     }
 }

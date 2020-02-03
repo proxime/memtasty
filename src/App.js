@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import './scss/main.scss';
 import './tools/fontawesome-free-5.12.0-web/css/all.css';
 import 'video-react/dist/video-react.css';
@@ -14,18 +14,11 @@ import * as appListeners from './appListeners';
 appListeners.authStateListener();
 
 const App = () => {
-    const [openNavigation, setOpenNavigation] = useState(null);
-
     return (
         <Provider store={store}>
             <Router>
-                <Navigation setOpenNavigation={setOpenNavigation} />
-                {openNavigation && (
-                    <Auth
-                        openNavigation={openNavigation}
-                        setOpenNavigation={setOpenNavigation}
-                    />
-                )}
+                <Navigation />
+                <Auth />
                 <Routes />
             </Router>
         </Provider>

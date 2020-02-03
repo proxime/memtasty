@@ -1,6 +1,9 @@
 import React, { useEffect } from 'react';
 import { useSelector } from 'react-redux';
-import { Link } from 'react-router-dom';
+import { NavLink, Link, Route } from 'react-router-dom';
+
+import UserPosts from './UserPosts';
+import UserComments from './UserComments';
 
 const UserProfile = () => {
     const user = useSelector(state => state.auth.user);
@@ -23,6 +26,7 @@ const UserProfile = () => {
                 ></div>
                 <div className="user__info">
                     <div className="user__nick">{user.nick}</div>
+
                     <div className="user__mail">{user.email}</div>
                 </div>
             </div>
@@ -35,11 +39,14 @@ const UserProfile = () => {
             </div>
             <div className="user__items">
                 <div className="user__select">
-                    <p className="active">Posty</p>
-                    <p>Komentarze</p>
+                    <NavLink to="/user" exact>
+                        Posty
+                    </NavLink>
+                    <NavLink to="/user/comments">Komentarze</NavLink>
                 </div>
-                <div className="user__items-container"></div>
             </div>
+            <Route path="/user" exact component={UserPosts} />
+            <Route path="/user/comments" exact component={UserComments} />
         </div>
     );
 };

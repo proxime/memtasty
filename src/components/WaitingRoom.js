@@ -11,8 +11,10 @@ const WaitingRoom = props => {
     const isLoading = useSelector(state => state.posts.loading);
     const allPages = useSelector(state => state.posts.pages);
     const [page, setPage] = useState(
-        props.match.params.id && !isNaN(Number(props.match.params.id))
-            ? props.match.params.id
+        props.match.params.id &&
+            !isNaN(Number(props.match.params.id)) &&
+            props.match.params.id > 0
+            ? Number(props.match.params.id)
             : 1
     );
 
@@ -29,15 +31,24 @@ const WaitingRoom = props => {
         window.scrollTo(0, 0);
     }, [page, dispatch]);
 
-    if (
-        props.match.params.id &&
-        (isNaN(Number(props.match.params.id)) ||
-            props.match.params.id > allPages)
-    )
-        return <Redirect to="/waiting" />;
+    if (allPages) {
+        if (
+            props.match.params.id &&
+            (isNaN(Number(props.match.params.id)) ||
+                props.match.params.id > allPages ||
+                props.match.params.id <= 0)
+        ) {
+            if (page !== 1) {
+                setPage(1);
+            }
+            return <Redirect to="/waiting" />;
+        }
+    }
 
     const renderPosts = () =>
-        posts.map(post => <Element key={post.key} post={post} />);
+        posts.map(post => (
+            <Element key={post.key} post={post} place="waitingRoom" />
+        ));
 
     const handleChangePage = newPage => {
         if (newPage > allPages) {
