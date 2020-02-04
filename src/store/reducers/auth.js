@@ -60,7 +60,7 @@ export default (state = initState, action) => {
                 settingsLoading: false,
                 user: {
                     ...state.user,
-                    ...payload,
+                    email: payload,
                 },
             };
         case SET_SETTING_PROGGRESS:

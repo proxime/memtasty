@@ -10,6 +10,9 @@ import {
     GET_USER_POSTS,
     GET_SINGLE_POST,
     ADD_COMMENT,
+    LIKE_COMMENT,
+    GET_USER_LIKED_COMMENTS,
+    DELETE_COMMENT,
 } from '../actions/types';
 
 const initState = {
@@ -18,6 +21,7 @@ const initState = {
     userPosts: [],
     waitingPosts: [],
     myLikes: [],
+    myCommentLikes: {},
     pages: 0,
     singlePost: null,
 };
@@ -70,6 +74,14 @@ export default (state = initState, action) => {
                     ...state,
                     waitingPosts: newPosts,
                 };
+            } else if (payload.place === 'single') {
+                return {
+                    ...state,
+                    singlePost: {
+                        ...state.singlePost,
+                        likes: payload.likes,
+                    },
+                };
             } else {
                 return state;
             }
@@ -102,13 +114,45 @@ export default (state = initState, action) => {
                 loading: false,
             };
         case ADD_COMMENT:
-            const postComments = [...state.singlePost.comments, payload];
-            console.log(postComments);
+            const postComments = [payload, ...state.singlePost.comments];
             return {
                 ...state,
                 singlePost: {
                     ...state.singlePost,
                     comments: postComments,
+                },
+            };
+        case LIKE_COMMENT:
+            const newComments = [...state.singlePost.comments].map(item => {
+                if (item.key === payload.commentId)
+                    item.points = payload.points;
+                return item;
+            });
+            return {
+                ...state,
+                singlePost: {
+                    ...state.singlePost,
+                    comments: newComments,
+                },
+                myCommentLikes: {
+                    ...state.myCommentLikes,
+                    [payload.commentId]: { type: payload.type },
+                },
+            };
+        case GET_USER_LIKED_COMMENTS:
+            return {
+                ...state,
+                myCommentLikes: payload,
+            };
+        case DELETE_COMMENT:
+            const deleteComments = [...state.singlePost.comments].filter(
+                comment => comment.key !== payload
+            );
+            return {
+                ...state,
+                singlePost: {
+                    ...state.singlePost,
+                    comments: deleteComments,
                 },
             };
         default:

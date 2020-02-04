@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { toggleLoginWindow } from '../../store/actions/auth';
-import { addComment } from '../../store/actions/posts';
+import { addComment, getUserLikedComments } from '../../store/actions/posts';
 
 import Comment from './Comment';
 
@@ -12,6 +12,12 @@ const Comments = ({ postId }) => {
     const comments = useSelector(state => state.posts.singlePost.comments);
 
     const dispatch = useDispatch();
+
+    useEffect(() => {
+        if (user) {
+            dispatch(getUserLikedComments());
+        }
+    }, [user, dispatch]);
 
     const handleLoginToComment = () => {
         dispatch(toggleLoginWindow('login'));
@@ -42,7 +48,7 @@ const Comments = ({ postId }) => {
 
     const renderComments = () => {
         return comments.map(comment => (
-            <Comment key={comment.key} comment={comment} />
+            <Comment key={comment.key} comment={comment} postId={postId} />
         ));
     };
 

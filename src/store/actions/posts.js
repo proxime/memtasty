@@ -8,6 +8,9 @@ import {
     GET_USER_POSTS,
     GET_SINGLE_POST,
     ADD_COMMENT,
+    LIKE_COMMENT,
+    GET_USER_LIKED_COMMENTS,
+    DELETE_COMMENT,
 } from './types';
 import { toggleLoginWindow } from './auth';
 import { auth, storage, database } from '../../firebaseConfig';
@@ -139,7 +142,7 @@ export const getWaitingPosts = page => async dispatch => {
                     const val = Number.isInteger(count / 7) ? 0 : 1;
                     const pages = Math.floor(count / 7) + val;
                     let otherPosts = count - page * 7;
-                    if (otherPosts < 0) {
+                    if (otherPosts < 0 && count > 7) {
                         otherPosts *= -1;
                         returnPosts.splice(0, otherPosts);
                     }
@@ -294,6 +297,31 @@ export const getSinglePost = id => dispatch => {
     });
 };
 
+export const getUserLikedComments = () => dispatch => {
+    const user = auth.currentUser;
+    if (user) {
+        const likedComments = {};
+        database
+            .ref(`/users/${user.uid}/commentLikes`)
+            .once('value', res =>
+                res.forEach(item => {
+                    likedComments[item.key] = item.val();
+                })
+            )
+            .then(() => {
+                dispatch({
+                    type: GET_USER_LIKED_COMMENTS,
+                    payload: likedComments,
+                });
+            });
+    } else {
+        dispatch({
+            type: GET_USER_LIKED_COMMENTS,
+            payload: {},
+        });
+    }
+};
+
 export const addComment = (postId, comment) => async (dispatch, getState) => {
     const user = auth.currentUser;
     const thisUser = getState().auth.user;
@@ -316,6 +344,7 @@ export const addComment = (postId, comment) => async (dispatch, getState) => {
             .ref(`/users/${user.uid}/comments/${newPostKey}`)
             .set(formData);
 
+        formData.key = newPostKey;
         dispatch({
             type: ADD_COMMENT,
             payload: {
@@ -330,4 +359,59 @@ export const addComment = (postId, comment) => async (dispatch, getState) => {
         console.log(err);
         return false;
     }
+};
+
+export const likeComment = (postId, commentId, value) => dispatch => {
+    const user = auth.currentUser;
+    if (!user) return dispatch(toggleLoginWindow('login'));
+    database
+        .ref(`/users/${user.uid}/commentLikes/${commentId}`)
+        .once('value', res => {
+            if (!res.val()) {
+                database
+                    .ref(`/posts/${postId}/comments/${commentId}`)
+                    .once('value', snapshot => {
+                        const points = snapshot.val().points;
+                        database
+                            .ref(`/posts/${postId}/comments/${commentId}`)
+                            .update({
+                                points: points + value,
+                            });
+                        database
+                            .ref(`/users/${user.uid}/commentLikes/${commentId}`)
+                            .set({
+                                type: value === 1 ? 'increment' : 'decrement',
+                            })
+                            .then(() => {
+                                dispatch({
+                                    type: LIKE_COMMENT,
+                                    payload: {
+                                        commentId,
+                                        points: points + value,
+                                        type:
+                                            value === 1
+                                                ? 'increment'
+                                                : 'decrement',
+                                    },
+                                });
+                            });
+                    });
+            }
+        });
+};
+
+export const deleteComment = (postId, commentId) => dispatch => {
+    console.log(postId, commentId);
+    database
+        .ref(`/posts/${postId}/comments/${commentId}`)
+        .remove()
+        .then(() => {
+            dispatch({
+                type: DELETE_COMMENT,
+                payload: commentId,
+            });
+        })
+        .catch(err => {
+            console.log(err);
+        });
 };

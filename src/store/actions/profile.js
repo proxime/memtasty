@@ -44,12 +44,6 @@ export const getProfile = id => dispatch => {
                         .then(() => {
                             readyToSend++;
                             if (readyToSend === posts.length) {
-                                console.log({
-                                    nick: user.nick,
-                                    avatar,
-                                    desc: user.desc ? user.desc : '',
-                                    posts: resPosts,
-                                });
                                 dispatch({
                                     type: GET_PROFILE,
                                     payload: {
