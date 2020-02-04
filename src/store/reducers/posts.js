@@ -13,6 +13,9 @@ import {
     LIKE_COMMENT,
     GET_USER_LIKED_COMMENTS,
     DELETE_COMMENT,
+    LIKE_REPLY,
+    ADD_REPLY,
+    DELETE_REPLY,
 } from '../actions/types';
 
 const initState = {
@@ -122,6 +125,20 @@ export default (state = initState, action) => {
                     comments: postComments,
                 },
             };
+        case ADD_REPLY:
+            const newPostComments = [...state.singlePost.comments].map(item => {
+                if (item.key === payload.commentId) {
+                    item.replies.push(payload.data);
+                }
+                return item;
+            });
+            return {
+                ...state,
+                singlePost: {
+                    ...state.singlePost,
+                    comments: newPostComments,
+                },
+            };
         case LIKE_COMMENT:
             const newComments = [...state.singlePost.comments].map(item => {
                 if (item.key === payload.commentId)
@@ -139,6 +156,29 @@ export default (state = initState, action) => {
                     [payload.commentId]: { type: payload.type },
                 },
             };
+        case LIKE_REPLY:
+            const newReplies = [...state.singlePost.comments].map(item => {
+                if (item.key === payload.commentId) {
+                    item.replies.map(reply => {
+                        if (reply.key === payload.replyId) {
+                            reply.points = payload.points;
+                        }
+                        return reply;
+                    });
+                }
+                return item;
+            });
+            return {
+                ...state,
+                singlePost: {
+                    ...state.singlePost,
+                    comments: newReplies,
+                },
+                myCommentLikes: {
+                    ...state.myCommentLikes,
+                    [payload.replyId]: { type: payload.type },
+                },
+            };
         case GET_USER_LIKED_COMMENTS:
             return {
                 ...state,
@@ -153,6 +193,25 @@ export default (state = initState, action) => {
                 singlePost: {
                     ...state.singlePost,
                     comments: deleteComments,
+                },
+            };
+        case DELETE_REPLY:
+            const deleteReplies = [...state.singlePost.comments].map(
+                comment => {
+                    if (comment.key === payload.commentId) {
+                        comment.replies = comment.replies.filter(
+                            reply => reply.key !== payload.replyId
+                        );
+                        console.log(comment.replies);
+                    }
+                    return comment;
+                }
+            );
+            return {
+                ...state,
+                singlePost: {
+                    ...state.singlePost,
+                    comments: deleteReplies,
                 },
             };
         default:

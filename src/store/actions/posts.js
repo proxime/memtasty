@@ -11,6 +11,9 @@ import {
     LIKE_COMMENT,
     GET_USER_LIKED_COMMENTS,
     DELETE_COMMENT,
+    ADD_REPLY,
+    LIKE_REPLY,
+    DELETE_REPLY,
 } from './types';
 import { toggleLoginWindow } from './auth';
 import { auth, storage, database } from '../../firebaseConfig';
@@ -252,8 +255,16 @@ export const getSinglePost = id => dispatch => {
         if (!post) return dispatch({ type: SET_POST_LOADING, payload: false });
         post.key = snapshopt.key;
         const postsTable = [];
+        let index = 0;
         for (const key in post.comments) {
-            postsTable.push({ ...post.comments[key], key });
+            postsTable.push({ ...post.comments[key], key, replies: [] });
+            for (const id in post.comments[key].replies) {
+                postsTable[index].replies.push({
+                    ...post.comments[key].replies[id],
+                    key: id,
+                });
+            }
+            index++;
         }
         post.comments = postsTable;
 
@@ -264,6 +275,22 @@ export const getSinglePost = id => dispatch => {
                 if (!owner) return;
                 post.avatar = owner.avatar;
                 post.nick = owner.nick;
+            })
+            .then(() => {
+                for (let i = 0; i < postsTable.length; ++i) {
+                    for (let k = 0; k < postsTable[i].replies.length; ++k) {
+                        const reply = postsTable[i].replies[k];
+                        database
+                            .ref(`/users/${reply.owner}`)
+                            .once('value', snapshopt => {
+                                const owner = snapshopt.val();
+                                if (!owner) return;
+                                post.comments[i].replies[k].avatar =
+                                    owner.avatar;
+                                post.comments[i].replies[k].nick = owner.nick;
+                            });
+                    }
+                }
             })
             .then(() => {
                 if (!post.comments.length) {
@@ -332,6 +359,7 @@ export const addComment = (postId, comment) => async (dispatch, getState) => {
         owner: user.uid,
         date,
         points: 0,
+        replies: [],
     };
 
     try {
@@ -401,7 +429,6 @@ export const likeComment = (postId, commentId, value) => dispatch => {
 };
 
 export const deleteComment = (postId, commentId) => dispatch => {
-    console.log(postId, commentId);
     database
         .ref(`/posts/${postId}/comments/${commentId}`)
         .remove()
@@ -409,6 +436,112 @@ export const deleteComment = (postId, commentId) => dispatch => {
             dispatch({
                 type: DELETE_COMMENT,
                 payload: commentId,
+            });
+        })
+        .catch(err => {
+            console.log(err);
+        });
+};
+
+export const addReply = (postId, commentId, text) => async (
+    dispatch,
+    getState
+) => {
+    const user = auth.currentUser;
+    const thisUser = getState().auth.user;
+    if (!user) return;
+    const date = new Date().getTime();
+    const formData = {
+        comment: text,
+        owner: user.uid,
+        date,
+        points: 0,
+    };
+
+    try {
+        const newPostKey = database
+            .ref(`/posts/${postId}/comments/${commentId}/replies`)
+            .push().key;
+
+        await database
+            .ref(`/posts/${postId}/comments/${commentId}/replies/${newPostKey}`)
+            .set(formData);
+
+        formData.key = newPostKey;
+        dispatch({
+            type: ADD_REPLY,
+            payload: {
+                data: {
+                    ...formData,
+                    nick: thisUser.nick,
+                    avatar: thisUser.avatar,
+                },
+                commentId,
+            },
+        });
+
+        return true;
+    } catch (err) {
+        console.log(err);
+        return false;
+    }
+};
+
+export const likeReply = (postId, commentId, replyId, value) => dispatch => {
+    const user = auth.currentUser;
+    if (!user) return dispatch(toggleLoginWindow('login'));
+    database
+        .ref(`/users/${user.uid}/commentLikes/${replyId}`)
+        .once('value', res => {
+            if (!res.val()) {
+                database
+                    .ref(
+                        `/posts/${postId}/comments/${commentId}/replies/${replyId}`
+                    )
+                    .once('value', snapshot => {
+                        const points = snapshot.val().points;
+                        database
+                            .ref(
+                                `/posts/${postId}/comments/${commentId}/replies/${replyId}`
+                            )
+                            .update({
+                                points: points + value,
+                            });
+                        database
+                            .ref(`/users/${user.uid}/commentLikes/${replyId}`)
+                            .set({
+                                type: value === 1 ? 'increment' : 'decrement',
+                            })
+                            .then(() => {
+                                dispatch({
+                                    type: LIKE_REPLY,
+                                    payload: {
+                                        replyId,
+                                        commentId,
+                                        points: points + value,
+                                        type:
+                                            value === 1
+                                                ? 'increment'
+                                                : 'decrement',
+                                    },
+                                });
+                            });
+                    });
+            }
+        });
+};
+
+export const deleteReply = (postId, commentId, replyId) => dispatch => {
+    database
+        .ref(`/posts/${postId}/comments/${commentId}/replies/${replyId}`)
+        .remove()
+        .then(() => {
+            dispatch({
+                type: DELETE_REPLY,
+                payload: {
+                    commentId,
+                    replyId,
+                },
             });
         })
         .catch(err => {

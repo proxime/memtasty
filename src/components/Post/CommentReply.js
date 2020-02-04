@@ -1,41 +1,129 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import CommentAddReply from './CommentAddReply';
+import { getElapsedTime } from '../../timeFunctions';
+import { likeReply, deleteReply } from '../../store/actions/posts';
+import { Link, withRouter } from 'react-router-dom';
+import { auth } from '../../firebaseConfig';
 
-const CommentReply = () => {
+const CommentReply = ({ postId, commentId, reply, history }) => {
+    const user = auth.currentUser;
+    const [isLiked, setIsLiked] = useState(null);
+    const [isAddingReply, setIsAddingReply] = useState(false);
+    const likedComments = useSelector(state => state.posts.myCommentLikes);
+    const dispatch = useDispatch();
+
+    useEffect(() => {
+        if (likedComments[reply.key]) {
+            setIsLiked(likedComments[reply.key].type);
+        }
+    }, [likedComments, reply.key]);
+
+    const stopAddReply = () => {
+        setIsAddingReply(false);
+    };
+
+    const handleRedirectToProfile = () => {
+        history.push(`/profile/${reply.owner}`);
+    };
+
+    const handleAddLike = value => {
+        if (isLiked) return;
+        dispatch(likeReply(postId, commentId, reply.key, value));
+    };
+
+    const handleDeleteReply = () => {
+        dispatch(deleteReply(postId, commentId, reply.key));
+    };
+
     return (
-        <div className="comment__answer">
-            <div className="comment__main">
-                <div
-                    className="comment__avatar-small"
-                    style={{
-                        backgroundImage: `url("https://firebasestorage.googleapis.com/v0/b/memtasty.appspot.com/o/avatars%2Fdefault.jpg?alt=media&token=fac1b126-6c62-4a1a-b7be-a7472871521a")`,
-                    }}
-                ></div>
-                <div className="comment__main-items">
-                    <div className="comment__top">
-                        <div className="comment__user">Ncik</div>
-                        <div className="comment__time">minutę temu</div>
-                    </div>
-                    <div className="comment__text">
-                        Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                        Reprehenderit harum debitis neque molestiae. Enim rem
-                        sequi amet asperiores, modi officiis.
-                    </div>
-                    <div className="comment__summary">
-                        <div className="comment__reply">Odpowiedz</div>
-                        <div className="comment__actions">
-                            <div className="comment__points">15</div>
-                            <div className="comment__plus">
-                                <i className="fas fa-plus"></i>
+        <>
+            <div className="comment__answer">
+                <div className="comment__main">
+                    <div
+                        className="comment__avatar-small"
+                        style={{
+                            backgroundImage: `url(${reply.avatar})`,
+                        }}
+                        onClick={handleRedirectToProfile}
+                    ></div>
+                    <div className="comment__main-items">
+                        <div className="comment__top">
+                            <Link
+                                to={`/profile/${reply.owner}`}
+                                className="comment__user"
+                            >
+                                {reply.nick}
+                            </Link>
+                            <div className="comment__time">
+                                {getElapsedTime(reply.date)}
                             </div>
-                            <div className="comment__minus">
-                                <i className="fas fa-minus"></i>
+                        </div>
+                        <div className="comment__text">{reply.comment}</div>
+                        <div className="comment__summary">
+                            {user && (
+                                <div className="comment__settings">
+                                    <p
+                                        className="comment__reply"
+                                        onClick={() => setIsAddingReply(true)}
+                                    >
+                                        Odpowiedz
+                                    </p>
+                                    {user && user.uid === reply.owner && (
+                                        <p className="comment__reply">Edytuj</p>
+                                    )}
+                                    {user && user.uid === reply.owner && (
+                                        <p
+                                            className="comment__reply"
+                                            onClick={handleDeleteReply}
+                                        >
+                                            Usuń
+                                        </p>
+                                    )}
+                                </div>
+                            )}
+                            <div className="comment__actions">
+                                <div className="comment__points">
+                                    {reply.points}
+                                </div>
+                                {(!isLiked || isLiked === 'increment') && (
+                                    <div
+                                        className={`comment__plus ${
+                                            isLiked === 'increment'
+                                                ? 'active'
+                                                : ''
+                                        }`}
+                                        onClick={() => handleAddLike(1)}
+                                    >
+                                        <i className="fas fa-plus"></i>
+                                    </div>
+                                )}
+                                {(!isLiked || isLiked === 'decrement') && (
+                                    <div
+                                        className={`comment__minus ${
+                                            isLiked === 'decrement'
+                                                ? 'active'
+                                                : ''
+                                        }`}
+                                        onClick={() => handleAddLike(-1)}
+                                    >
+                                        <i className="fas fa-minus"></i>
+                                    </div>
+                                )}
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
+            {isAddingReply && (
+                <CommentAddReply
+                    stopAddReply={stopAddReply}
+                    postId={postId}
+                    commentId={commentId}
+                />
+            )}
+        </>
     );
 };
 
-export default CommentReply;
+export default withRouter(CommentReply);

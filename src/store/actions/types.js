@@ -20,3 +20,6 @@ export const ADD_COMMENT = 'ADD_COMMENT';
 export const LIKE_COMMENT = 'LIKE_COMMENT';
 export const GET_USER_LIKED_COMMENTS = 'GET_USER_LIKED_COMMENTS';
 export const DELETE_COMMENT = 'DELETE_COMMENT';
+export const ADD_REPLY = 'ADD_REPLY';
+export const LIKE_REPLY = 'LIKE_REPLY';
+export const DELETE_REPLY = 'DELETE_REPLY';

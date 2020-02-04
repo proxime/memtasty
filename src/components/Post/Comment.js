@@ -4,11 +4,13 @@ import { getElapsedTime } from '../../timeFunctions';
 import { useDispatch, useSelector } from 'react-redux';
 import { likeComment, deleteComment } from '../../store/actions/posts';
 import { auth } from '../../firebaseConfig';
-// import CommentReply from './CommentReply';
+import CommentReply from './CommentReply';
+import CommentAddReply from './CommentAddReply';
 
 const Comment = ({ comment, history, postId }) => {
     const user = auth.currentUser;
     const [isLiked, setIsLiked] = useState(null);
+    const [isAddingReply, setIsAddingReply] = useState(false);
     const likedComments = useSelector(state => state.posts.myCommentLikes);
     const dispatch = useDispatch();
 
@@ -29,6 +31,20 @@ const Comment = ({ comment, history, postId }) => {
     const handleDeleteComment = () => {
         dispatch(deleteComment(postId, comment.key));
     };
+
+    const stopAddReply = () => {
+        setIsAddingReply(false);
+    };
+
+    const renderReplies = () =>
+        comment.replies.map(item => (
+            <CommentReply
+                key={item.key}
+                postId={postId}
+                commentId={comment.key}
+                reply={item}
+            />
+        ));
 
     return (
         <div className="comment">
@@ -54,20 +70,27 @@ const Comment = ({ comment, history, postId }) => {
                     </div>
                     <div className="comment__text">{comment.comment}</div>
                     <div className="comment__summary">
-                        <div className="comment__settings">
-                            <p className="comment__reply">Odpowiedz</p>
-                            {user && user.uid === comment.owner && (
-                                <p className="comment__reply">Edytuj</p>
-                            )}
-                            {user && user.uid === comment.owner && (
+                        {user && (
+                            <div className="comment__settings">
                                 <p
                                     className="comment__reply"
-                                    onClick={handleDeleteComment}
+                                    onClick={() => setIsAddingReply(true)}
                                 >
-                                    Usuń
+                                    Odpowiedz
                                 </p>
-                            )}
-                        </div>
+                                {user && user.uid === comment.owner && (
+                                    <p className="comment__reply">Edytuj</p>
+                                )}
+                                {user && user.uid === comment.owner && (
+                                    <p
+                                        className="comment__reply"
+                                        onClick={handleDeleteComment}
+                                    >
+                                        Usuń
+                                    </p>
+                                )}
+                            </div>
+                        )}
                         <div className="comment__actions">
                             <div className="comment__points">
                                 {comment.points}
@@ -96,10 +119,21 @@ const Comment = ({ comment, history, postId }) => {
                     </div>
                 </div>
             </div>
-            <div className="comment__replies">
-                {/* <CommentReply />
-                <CommentReply /> */}
-            </div>
+            {(isAddingReply ||
+                (comment.replies && comment.replies.length > 0)) && (
+                <div className="comment__replies">
+                    {isAddingReply && (
+                        <CommentAddReply
+                            stopAddReply={stopAddReply}
+                            postId={postId}
+                            commentId={comment.key}
+                        />
+                    )}
+                    {comment.replies &&
+                        comment.replies.length > 0 &&
+                        renderReplies()}
+                </div>
+            )}
         </div>
     );
 };
