@@ -124,6 +124,9 @@
         margin: 0 5px;
         font-size: 1.3rem;
         font-weight: 500;
+        display: inline;
+        cursor: pointer;
+        user-select: none;
         &:hover {
             text-decoration: underline;
         }

@@ -111,6 +111,15 @@ export const getPosts = (page, from) => async dispatch => {
         .limitToLast(page * 7)
         .once('value', snapshot => {
             const posts = [];
+            if (!snapshot.val()) {
+                return dispatch({
+                    type: GET_POSTS,
+                    payload: {
+                        posts: [],
+                        pages: 1,
+                    },
+                });
+            }
             snapshot.forEach(snap => {
                 posts.push(snap);
             });
@@ -595,7 +604,7 @@ export const deleteReply = (postId, commentId, replyId, from) => dispatch => {
         });
 };
 
-export const addPostToMain = (postId, owner) => dispatch => {
+export const addPostToMain = postId => dispatch => {
     database.ref(`/posts/${postId}`).once('value', snapshot => {
         const post = snapshot.val();
         if (!post) return;
@@ -613,8 +622,48 @@ export const addPostToMain = (postId, owner) => dispatch => {
                     });
 
                 database
-                    .ref(`/users/${owner}/posts/${postId}`)
+                    .ref(`/users/${post.owner}/posts/${postId}`)
                     .update({ status: 'main' });
             });
     });
+};
+
+export const deletePost = (postId, place) => dispatch => {
+    const from = place === 'post' ? 'posts' : 'mainPosts';
+    database
+        .ref(`/${from}/${postId}`)
+        .once('value', snapshot => {
+            const post = snapshot.val();
+            console.log(post);
+            if (!post) return;
+            database.ref(`/${from}/${postId}`).remove();
+            database.ref(`/users/${post.owner}/posts/${postId}`).remove();
+        })
+        .then(() => {
+            storage
+                .ref(`/content/${postId}`)
+                .delete()
+                .catch(err => {
+                    console.log(err);
+                });
+        })
+        .catch(err => {
+            console.log(err);
+        });
+};
+
+export const getRandomPost = history => dispatch => {
+    fetch(`https://memtasty.firebaseio.com/mainPosts.json?shallow=true`)
+        .then(res => res.json())
+        .then(data => {
+            const dataArray = [];
+            for (const key in data) {
+                dataArray.push(key);
+            }
+
+            const randomNumber = Math.floor(Math.random() * dataArray.length);
+            const randomKey = dataArray[randomNumber];
+
+            history.push(`/mainPost/${randomKey}`);
+        });
 };

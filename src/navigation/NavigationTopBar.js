@@ -1,7 +1,15 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, withRouter } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { getRandomPost } from '../store/actions/posts';
 
-const NavigationTopBar = () => {
+const NavigationTopBar = ({ history }) => {
+    const dispatch = useDispatch();
+
+    const handleGetRandomPost = () => {
+        dispatch(getRandomPost(history));
+    };
+
     return (
         <div className="navigation-top-bar">
             <div className="navigation-top-bar__categories">
@@ -11,12 +19,15 @@ const NavigationTopBar = () => {
                 <Link to="/waiting" className="navigation-top-bar__item">
                     Poczekalnia
                 </Link>
-                <a href="#!" className="navigation-top-bar__item">
+                <p
+                    onClick={handleGetRandomPost}
+                    className="navigation-top-bar__item"
+                >
                     Losowe
-                </a>
+                </p>
             </div>
         </div>
     );
 };
 
-export default NavigationTopBar;
+export default withRouter(NavigationTopBar);

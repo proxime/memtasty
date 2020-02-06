@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { getElapsedTime } from '../../timeFunctions';
 import { useSelector, useDispatch } from 'react-redux';
-import { addPostToMain } from '../../store/actions/posts';
+import { addPostToMain, deletePost } from '../../store/actions/posts';
 import ElementSummary from './ElementSummary';
 import ElementImage from './ElementImage';
 import ElementVideo from './ElementVideo';
@@ -17,7 +17,11 @@ const Element = ({ post, place, single }) => {
     const dispatch = useDispatch();
 
     const handleAddPostToMain = () => {
-        dispatch(addPostToMain(post.key, post.owner));
+        dispatch(addPostToMain(post.key));
+    };
+
+    const handleRemovePost = () => {
+        dispatch(deletePost(post.key, from));
     };
 
     const renderContent = () => {
@@ -64,15 +68,22 @@ const Element = ({ post, place, single }) => {
 
     return (
         <div className="element">
-            {isAdmin && single && post.status === 'waiting' && (
+            {isAdmin && single && (
                 <div className="admin-panel__options add">
+                    {post.status === 'waiting' && (
+                        <div
+                            className="admin-panel__option"
+                            onClick={handleAddPostToMain}
+                        >
+                            Dodaj na główną
+                        </div>
+                    )}
                     <div
                         className="admin-panel__option"
-                        onClick={handleAddPostToMain}
+                        onClick={handleRemovePost}
                     >
-                        Dodaj na główną
+                        Usuń
                     </div>
-                    <div className="admin-panel__option">Usuń</div>
                 </div>
             )}
             <div className="element__top">

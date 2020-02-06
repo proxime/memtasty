@@ -34,6 +34,8 @@ const Post = ({ match }) => {
             <div className="section__list">
                 {firstRender || loading || userLoading ? (
                     <Spinner size={250} />
+                ) : !post ? (
+                    <p>brak wyników</p>
                 ) : (
                     <>
                         <Element post={post} place="single" single />
