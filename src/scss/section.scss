@@ -7,8 +7,8 @@
     color: white;
     &__list {
         flex-grow: 1;
-        max-width: 650px;
-        padding-top: 20px;
+        max-width: 670px;
+        padding: 20px;
     }
     &__recommended {
         flex-grow: 1;
@@ -67,26 +67,29 @@
     }
     &__author {
         display: flex;
-        align-items: center;
         flex-grow: 1;
         user-select: none;
     }
     &__author-avatar {
-        width: 30px;
-        height: 30px;
+        width: 45px;
+        height: 45px;
         overflow: hidden;
         border-radius: 50%;
         background-position: center;
         background-size: cover;
-        margin-right: 5px;
+        margin-right: 8px;
         cursor: pointer;
     }
     &__author-name {
-        font-size: 1.5rem;
-        font-weight: 300;
+        margin-top: 5px;
+        font-size: 1.8rem;
+        font-weight: 400;
         cursor: pointer;
         color: white;
         text-decoration: none;
+        &:hover {
+            text-decoration: underline;
+        }
     }
     &__date {
         color: #bbb;
@@ -102,6 +105,33 @@
         text-decoration: none;
         &.single {
             cursor: default;
+            &:hover {
+                color: white;
+            }
+        }
+        &:hover {
+            color: $primary-color;
+        }
+    }
+    &__tags {
+        display: flex;
+        font-size: 1.2rem;
+        font-weight: 700;
+        padding-top: 5px;
+    }
+    &__category {
+        margin-right: 5px;
+        cursor: pointer;
+        color: $primary-color;
+        &:hover {
+            text-decoration: underline;
+        }
+    }
+    &__tag {
+        margin: 0 5px;
+        cursor: pointer;
+        &:hover {
+            text-decoration: underline;
         }
     }
     &__content {

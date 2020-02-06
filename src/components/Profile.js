@@ -6,11 +6,17 @@ import { auth } from '../firebaseConfig';
 import RecomendSection from './Elements/RecomendSection';
 import Spinner from './Spinner';
 import ProfilePosts from './Profile/ProfilePosts';
+import AdminPanel from './Profile/AdminPanel';
 
 const Profile = ({ match }) => {
     const user = auth.currentUser;
+    const isAdmin = useSelector(state => {
+        if (state.auth.user) return state.auth.user.admin;
+        else return false;
+    });
     const [firstRender, setFirstRender] = useState(true);
     const loading = useSelector(state => state.profile.loading);
+    const userLoading = useSelector(state => state.auth.loading);
     const profile = useSelector(state => state.profile.profile);
     const dispatch = useDispatch();
 
@@ -32,7 +38,7 @@ const Profile = ({ match }) => {
     return (
         <div className="section">
             <div className="section__list">
-                {loading || firstRender ? (
+                {loading || userLoading || firstRender ? (
                     <div className="user">
                         <Spinner size={200} />
                     </div>
@@ -52,6 +58,12 @@ const Profile = ({ match }) => {
                                     </div>
                                 </div>
                             </div>
+                            {user && isAdmin && (
+                                <AdminPanel
+                                    id={match.params.id}
+                                    isAdmin={profile.admin}
+                                />
+                            )}
                             {profile.desc && (
                                 <div className="user__desc">{profile.desc}</div>
                             )}

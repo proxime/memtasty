@@ -2,7 +2,7 @@ import {
     SET_POST_LOADING,
     SET_POST_PROGGRESS,
     CREATE_POST,
-    GET_WAITING_POSTS,
+    GET_POSTS,
     ADD_LIKE,
     ADD_USER_LIKES,
     GET_USER_POSTS,
@@ -77,9 +77,10 @@ export const createPost = (
                     };
 
                     await database.ref(`/posts/${imageId}`).set(formData);
-                    await database.ref(`/users/${uid}/posts/`).push({
+                    await database.ref(`/users/${uid}/posts/${imageId}`).set({
                         key: imageId,
                         date,
+                        status: 'waiting',
                     });
                     dispatch({
                         type: CREATE_POST,
@@ -102,10 +103,10 @@ export const createPost = (
     }
 };
 
-export const getWaitingPosts = page => async dispatch => {
+export const getPosts = (page, from) => async dispatch => {
     dispatch({ type: SET_POST_LOADING, payload: true });
     database
-        .ref('/posts/')
+        .ref(`/${from}/`)
         .orderByChild('date')
         .limitToLast(page * 7)
         .once('value', snapshot => {
@@ -117,6 +118,7 @@ export const getWaitingPosts = page => async dispatch => {
             for (let i = 0; i < 7; ++i) {
                 if (posts[i]) {
                     returnPosts[i] = posts[i].val();
+                    returnPosts[i].key = posts[i].key;
                     returnPosts[i].key = posts[i].key;
                 } else {
                     break;
@@ -132,32 +134,39 @@ export const getWaitingPosts = page => async dispatch => {
                         if (!owner) return;
                         returnPosts[i].avatar = owner.avatar;
                         returnPosts[i].nick = owner.nick;
+                    })
+                    .then(() => {
+                        if (i === returnPosts.length - 1) {
+                            fetch(
+                                `https://memtasty.firebaseio.com/${from}.json?shallow=true`
+                            )
+                                .then(res => res.json())
+                                .then(data => {
+                                    let count = 0;
+                                    for (const key in data) {
+                                        count++;
+                                    }
+                                    const val = Number.isInteger(count / 7)
+                                        ? 0
+                                        : 1;
+                                    const pages = Math.floor(count / 7) + val;
+                                    let otherPosts = count - page * 7;
+                                    if (otherPosts < 0 && count > 7) {
+                                        otherPosts *= -1;
+                                        returnPosts.splice(0, otherPosts);
+                                    }
+
+                                    dispatch({
+                                        type: GET_POSTS,
+                                        payload: {
+                                            posts: returnPosts,
+                                            pages,
+                                        },
+                                    });
+                                });
+                        }
                     });
             }
-
-            fetch('https://memtasty.firebaseio.com/posts.json?shallow=true')
-                .then(res => res.json())
-                .then(data => {
-                    let count = 0;
-                    for (const key in data) {
-                        count++;
-                    }
-                    const val = Number.isInteger(count / 7) ? 0 : 1;
-                    const pages = Math.floor(count / 7) + val;
-                    let otherPosts = count - page * 7;
-                    if (otherPosts < 0 && count > 7) {
-                        otherPosts *= -1;
-                        returnPosts.splice(0, otherPosts);
-                    }
-
-                    dispatch({
-                        type: GET_WAITING_POSTS,
-                        payload: {
-                            posts: returnPosts,
-                            pages,
-                        },
-                    });
-                });
         });
 };
 
@@ -185,15 +194,14 @@ export const addLike = (status, postId, type, place) => dispatch => {
             },
         });
 
-        let store;
         let value;
 
-        if (status === 'waiting') store = 'posts';
+        const from = status === 'waiting' ? 'posts' : 'mainPosts';
 
         if (type === 'increase') value = 1;
         else value = -1;
 
-        const ref = database.ref(`/${store}/${postId}`);
+        const ref = database.ref(`/${from}/${postId}`);
         ref.once('value', snapshot => {
             const resLikes = snapshot.val().likes;
             ref.update({ likes: resLikes + value }, err => {
@@ -230,8 +238,9 @@ export const getLoggedUserPosts = () => dispatch => {
             const resPosts = [];
             let readyToSend = 0;
             posts.forEach(post => {
+                const from = post.status === 'waiting' ? 'posts' : 'mainPosts';
                 database
-                    .ref(`/posts/${post.key}`)
+                    .ref(`/${from}/${post.key}`)
                     .once('value', snapshot => {
                         resPosts.push({ ...snapshot.val(), key: post.key });
                     })
@@ -248,79 +257,105 @@ export const getLoggedUserPosts = () => dispatch => {
         });
 };
 
-export const getSinglePost = id => dispatch => {
+export const getSinglePost = (id, from) => (dispatch, getState) => {
     dispatch({ type: SET_POST_LOADING, payload: true });
-    database.ref(`/posts/${id}`).once('value', snapshopt => {
-        const post = snapshopt.val();
-        if (!post) return dispatch({ type: SET_POST_LOADING, payload: false });
-        post.key = snapshopt.key;
+    const downloadedPosts = getState().posts.downloadedPosts;
+    const singlePost = downloadedPosts.find(item => item.key === id);
+    if (singlePost) {
         const postsTable = [];
         let index = 0;
-        for (const key in post.comments) {
-            postsTable.push({ ...post.comments[key], key, replies: [] });
-            for (const id in post.comments[key].replies) {
+        for (const key in singlePost.comments) {
+            postsTable.push({ ...singlePost.comments[key], key, replies: [] });
+            for (const id in singlePost.comments[key].replies) {
                 postsTable[index].replies.push({
-                    ...post.comments[key].replies[id],
+                    ...singlePost.comments[key].replies[id],
                     key: id,
                 });
             }
             index++;
         }
-        post.comments = postsTable;
+        singlePost.comments = postsTable;
 
-        database
-            .ref(`/users/${post.owner}`)
-            .once('value', snapshopt => {
-                const owner = snapshopt.val();
-                if (!owner) return;
-                post.avatar = owner.avatar;
-                post.nick = owner.nick;
-            })
-            .then(() => {
-                for (let i = 0; i < postsTable.length; ++i) {
-                    for (let k = 0; k < postsTable[i].replies.length; ++k) {
-                        const reply = postsTable[i].replies[k];
-                        database
-                            .ref(`/users/${reply.owner}`)
-                            .once('value', snapshopt => {
-                                const owner = snapshopt.val();
-                                if (!owner) return;
-                                post.comments[i].replies[k].avatar =
-                                    owner.avatar;
-                                post.comments[i].replies[k].nick = owner.nick;
-                            });
-                    }
-                }
-            })
-            .then(() => {
-                if (!post.comments.length) {
-                    return dispatch({
-                        type: GET_SINGLE_POST,
-                        payload: post,
+        dispatch(getPostComments(singlePost));
+    } else {
+        database.ref(`/${from}/${id}`).once('value', snapshopt => {
+            const post = snapshopt.val();
+            if (!post)
+                return dispatch({ type: SET_POST_LOADING, payload: false });
+            post.key = snapshopt.key;
+            const postsTable = [];
+            let index = 0;
+            for (const key in post.comments) {
+                postsTable.push({ ...post.comments[key], key, replies: [] });
+                for (const id in post.comments[key].replies) {
+                    postsTable[index].replies.push({
+                        ...post.comments[key].replies[id],
+                        key: id,
                     });
                 }
-                for (let i = 0; i < post.comments.length; ++i) {
-                    database
-                        .ref(`/users/${post.comments[i].owner}`)
-                        .once('value', snapshot => {
-                            const owner = snapshot.val();
-                            if (!owner) {
-                                post.comments[i].nick =
-                                    'Nieistniejący użytkownik';
-                            }
-                            post.comments[i].avatar = owner.avatar;
-                            post.comments[i].nick = owner.nick;
-                        })
-                        .then(() => {
-                            if (i === post.comments.length - 1) {
-                                dispatch({
-                                    type: GET_SINGLE_POST,
-                                    payload: post,
-                                });
-                            }
-                        });
-                }
+                index++;
+            }
+            post.comments = postsTable;
+
+            database
+                .ref(`/users/${post.owner}`)
+                .once('value', snapshopt => {
+                    const owner = snapshopt.val();
+                    if (!owner) return;
+                    post.avatar = owner.avatar;
+                    post.nick = owner.nick;
+                })
+                .then(() => {
+                    dispatch(getPostComments(post));
+                });
+        });
+    }
+};
+
+export const getPostComments = post => dispatch => {
+    const getData = async () => {
+        for (let i = 0; i < post.comments.length; ++i) {
+            for (let k = 0; k < post.comments[i].replies.length; ++k) {
+                const reply = post.comments[i].replies[k];
+                database
+                    .ref(`/users/${reply.owner}`)
+                    .once('value', snapshopt => {
+                        const owner = snapshopt.val();
+                        if (!owner) return;
+                        post.comments[i].replies[k].avatar = owner.avatar;
+                        post.comments[i].replies[k].nick = owner.nick;
+                    });
+            }
+        }
+    };
+
+    getData().then(() => {
+        if (!post.comments.length) {
+            return dispatch({
+                type: GET_SINGLE_POST,
+                payload: post,
             });
+        }
+        for (let i = 0; i < post.comments.length; ++i) {
+            database
+                .ref(`/users/${post.comments[i].owner}`)
+                .once('value', snapshot => {
+                    const owner = snapshot.val();
+                    if (!owner) {
+                        post.comments[i].nick = 'Nieistniejący użytkownik';
+                    }
+                    post.comments[i].avatar = owner.avatar;
+                    post.comments[i].nick = owner.nick;
+                })
+                .then(() => {
+                    if (i === post.comments.length - 1) {
+                        dispatch({
+                            type: GET_SINGLE_POST,
+                            payload: post,
+                        });
+                    }
+                });
+        }
     });
 };
 
@@ -349,7 +384,10 @@ export const getUserLikedComments = () => dispatch => {
     }
 };
 
-export const addComment = (postId, comment) => async (dispatch, getState) => {
+export const addComment = (postId, comment, from) => async (
+    dispatch,
+    getState
+) => {
     const user = auth.currentUser;
     const thisUser = getState().auth.user;
     if (!user) return;
@@ -365,7 +403,7 @@ export const addComment = (postId, comment) => async (dispatch, getState) => {
     try {
         const newPostKey = database.ref(`/posts/${postId}/comments`).push().key;
         await database
-            .ref(`/posts/${postId}/comments/${newPostKey}`)
+            .ref(`/${from}/${postId}/comments/${newPostKey}`)
             .set(formData);
 
         await database
@@ -389,7 +427,7 @@ export const addComment = (postId, comment) => async (dispatch, getState) => {
     }
 };
 
-export const likeComment = (postId, commentId, value) => dispatch => {
+export const likeComment = (postId, commentId, value, from) => dispatch => {
     const user = auth.currentUser;
     if (!user) return dispatch(toggleLoginWindow('login'));
     database
@@ -397,11 +435,11 @@ export const likeComment = (postId, commentId, value) => dispatch => {
         .once('value', res => {
             if (!res.val()) {
                 database
-                    .ref(`/posts/${postId}/comments/${commentId}`)
+                    .ref(`/${from}/${postId}/comments/${commentId}`)
                     .once('value', snapshot => {
                         const points = snapshot.val().points;
                         database
-                            .ref(`/posts/${postId}/comments/${commentId}`)
+                            .ref(`/${from}/${postId}/comments/${commentId}`)
                             .update({
                                 points: points + value,
                             });
@@ -428,9 +466,9 @@ export const likeComment = (postId, commentId, value) => dispatch => {
         });
 };
 
-export const deleteComment = (postId, commentId) => dispatch => {
+export const deleteComment = (postId, commentId, from) => dispatch => {
     database
-        .ref(`/posts/${postId}/comments/${commentId}`)
+        .ref(`/${from}/${postId}/comments/${commentId}`)
         .remove()
         .then(() => {
             dispatch({
@@ -443,7 +481,7 @@ export const deleteComment = (postId, commentId) => dispatch => {
         });
 };
 
-export const addReply = (postId, commentId, text) => async (
+export const addReply = (postId, commentId, text, from) => async (
     dispatch,
     getState
 ) => {
@@ -460,11 +498,13 @@ export const addReply = (postId, commentId, text) => async (
 
     try {
         const newPostKey = database
-            .ref(`/posts/${postId}/comments/${commentId}/replies`)
+            .ref(`/${from}/${postId}/comments/${commentId}/replies`)
             .push().key;
 
         await database
-            .ref(`/posts/${postId}/comments/${commentId}/replies/${newPostKey}`)
+            .ref(
+                `/${from}/${postId}/comments/${commentId}/replies/${newPostKey}`
+            )
             .set(formData);
 
         formData.key = newPostKey;
@@ -487,7 +527,13 @@ export const addReply = (postId, commentId, text) => async (
     }
 };
 
-export const likeReply = (postId, commentId, replyId, value) => dispatch => {
+export const likeReply = (
+    postId,
+    commentId,
+    replyId,
+    value,
+    from
+) => dispatch => {
     const user = auth.currentUser;
     if (!user) return dispatch(toggleLoginWindow('login'));
     database
@@ -496,13 +542,13 @@ export const likeReply = (postId, commentId, replyId, value) => dispatch => {
             if (!res.val()) {
                 database
                     .ref(
-                        `/posts/${postId}/comments/${commentId}/replies/${replyId}`
+                        `/${from}/${postId}/comments/${commentId}/replies/${replyId}`
                     )
                     .once('value', snapshot => {
                         const points = snapshot.val().points;
                         database
                             .ref(
-                                `/posts/${postId}/comments/${commentId}/replies/${replyId}`
+                                `/${from}/${postId}/comments/${commentId}/replies/${replyId}`
                             )
                             .update({
                                 points: points + value,
@@ -531,9 +577,9 @@ export const likeReply = (postId, commentId, replyId, value) => dispatch => {
         });
 };
 
-export const deleteReply = (postId, commentId, replyId) => dispatch => {
+export const deleteReply = (postId, commentId, replyId, from) => dispatch => {
     database
-        .ref(`/posts/${postId}/comments/${commentId}/replies/${replyId}`)
+        .ref(`/${from}/${postId}/comments/${commentId}/replies/${replyId}`)
         .remove()
         .then(() => {
             dispatch({
@@ -547,4 +593,28 @@ export const deleteReply = (postId, commentId, replyId) => dispatch => {
         .catch(err => {
             console.log(err);
         });
+};
+
+export const addPostToMain = (postId, owner) => dispatch => {
+    database.ref(`/posts/${postId}`).once('value', snapshot => {
+        const post = snapshot.val();
+        if (!post) return;
+        post.status = 'main';
+        post.mainTime = new Date().getTime();
+        database
+            .ref(`/mainPosts/${postId}`)
+            .set(post)
+            .then(() => {
+                database
+                    .ref(`/posts/${postId}`)
+                    .remove()
+                    .then(() => {
+                        console.log('success');
+                    });
+
+                database
+                    .ref(`/users/${owner}/posts/${postId}`)
+                    .update({ status: 'main' });
+            });
+    });
 };

@@ -25,7 +25,7 @@ const UploadedImage = ({ file, fileError, handleSelectFile }) => {
     return (
         <>
             <div className="create-post__selected-image">
-                {file.type === 'video/mp4' ? (
+                {file.type === 'video/mp4' || file.type === 'video/webm' ? (
                     <ElementVideo video={fileSrc} />
                 ) : (
                     <img src={fileSrc} alt="" />
@@ -39,7 +39,7 @@ const UploadedImage = ({ file, fileError, handleSelectFile }) => {
                     type="file"
                     name="file"
                     style={{ display: 'none' }}
-                    accept="video/mp4,image/jpeg,image/png,image/gif"
+                    accept="video/mp4,image/jpeg,image/png,image/gif,video/webm"
                     onChange={handleSelectFile}
                 />
                 <div className="create-post__select-new-image">Zmień obraz</div>

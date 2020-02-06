@@ -2,7 +2,7 @@ import {
     SET_POST_LOADING,
     SET_POST_PROGGRESS,
     CREATE_POST,
-    GET_WAITING_POSTS,
+    GET_POSTS,
     ADD_LIKE,
     ADD_USER_LIKES,
     GET_USER_LIKES,
@@ -22,7 +22,7 @@ const initState = {
     loading: false,
     changeProggress: 0,
     userPosts: [],
-    waitingPosts: [],
+    downloadedPosts: [],
     myLikes: [],
     myCommentLikes: {},
     pages: 0,
@@ -49,10 +49,10 @@ export default (state = initState, action) => {
                 loading: false,
                 changeProggress: 0,
             };
-        case GET_WAITING_POSTS:
+        case GET_POSTS:
             return {
                 ...state,
-                waitingPosts: payload.posts,
+                downloadedPosts: payload.posts,
                 pages: payload.pages,
                 loading: false,
             };
@@ -67,15 +67,18 @@ export default (state = initState, action) => {
                     ...state,
                     userPosts: newPosts,
                 };
-            } else if (payload.place === 'waitingRoom') {
-                const postIndex = state.waitingPosts.findIndex(
+            } else if (
+                payload.place === 'waitingRoom' ||
+                payload.place === 'home'
+            ) {
+                const postIndex = state.downloadedPosts.findIndex(
                     post => post.key === payload.key
                 );
-                const newPosts = [...state.waitingPosts];
+                const newPosts = [...state.downloadedPosts];
                 newPosts[postIndex].likes = payload.likes;
                 return {
                     ...state,
-                    waitingPosts: newPosts,
+                    downloadedPosts: newPosts,
                 };
             } else if (payload.place === 'single') {
                 return {
@@ -202,7 +205,6 @@ export default (state = initState, action) => {
                         comment.replies = comment.replies.filter(
                             reply => reply.key !== payload.replyId
                         );
-                        console.log(comment.replies);
                     }
                     return comment;
                 }

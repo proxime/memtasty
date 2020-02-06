@@ -30,6 +30,7 @@ export default (state = initState, action) => {
                     avatar: payload.avatar,
                     emailVerified: payload.emailVerified,
                     desc: payload.desc,
+                    admin: payload.admin,
                 },
                 loading: false,
             };

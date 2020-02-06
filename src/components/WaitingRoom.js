@@ -2,12 +2,12 @@ import React, { useEffect, useState } from 'react';
 import Element from './Elements/Element';
 import RecomendSection from './Elements/RecomendSection';
 import { useSelector, useDispatch } from 'react-redux';
-import { getWaitingPosts } from '../store/actions/posts';
+import { getPosts } from '../store/actions/posts';
 import { Redirect, withRouter } from 'react-router-dom';
 import Spinner from './Spinner';
 
 const WaitingRoom = props => {
-    const posts = useSelector(state => state.posts.waitingPosts);
+    const posts = useSelector(state => state.posts.downloadedPosts);
     const isLoading = useSelector(state => state.posts.loading);
     const allPages = useSelector(state => state.posts.pages);
     const [page, setPage] = useState(
@@ -26,8 +26,10 @@ const WaitingRoom = props => {
 
     const dispatch = useDispatch();
 
+    console.log('sad');
+
     useEffect(() => {
-        dispatch(getWaitingPosts(page));
+        dispatch(getPosts(page, 'posts'));
         window.scrollTo(0, 0);
     }, [page, dispatch]);
 

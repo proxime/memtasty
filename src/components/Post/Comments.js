@@ -5,7 +5,7 @@ import { addComment, getUserLikedComments } from '../../store/actions/posts';
 
 import Comment from './Comment';
 
-const Comments = ({ postId }) => {
+const Comments = ({ postId, from }) => {
     const [comment, setComment] = useState('');
     const [commentError, setCommentError] = useState('');
     const user = useSelector(state => state.auth.user);
@@ -30,7 +30,7 @@ const Comments = ({ postId }) => {
         if (comment.length > 100)
             return setCommentError('Komentarz może zawierać do 100 znaków');
         setComment('');
-        dispatch(addComment(postId, comment)).then(res => {
+        dispatch(addComment(postId, comment, from)).then(res => {
             if (res) {
             } else {
                 setCommentError('Coś poszło nie tak, spróbuj ponownie');
@@ -48,7 +48,12 @@ const Comments = ({ postId }) => {
 
     const renderComments = () => {
         return comments.map(comment => (
-            <Comment key={comment.key} comment={comment} postId={postId} />
+            <Comment
+                key={comment.key}
+                comment={comment}
+                postId={postId}
+                from={from}
+            />
         ));
     };
 

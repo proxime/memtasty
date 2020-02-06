@@ -1,4 +1,10 @@
-import { auth, database, storage, firebase } from '../../firebaseConfig';
+import {
+    auth,
+    database,
+    storage,
+    functions,
+    firebase,
+} from '../../firebaseConfig';
 import {
     SET_SETTING_LOAING,
     CHANGE_PROFILE_DATA,
@@ -247,4 +253,9 @@ export const changeAccountData = (
             error,
         };
     }
+};
+
+export const addAdmin = id => dispatch => {
+    const addAdminRole = functions.httpsCallable('addAdminRole');
+    addAdminRole({ id }).then(res => console.log(res));
 };

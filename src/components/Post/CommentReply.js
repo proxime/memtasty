@@ -6,7 +6,7 @@ import { likeReply, deleteReply } from '../../store/actions/posts';
 import { Link, withRouter } from 'react-router-dom';
 import { auth } from '../../firebaseConfig';
 
-const CommentReply = ({ postId, commentId, reply, history }) => {
+const CommentReply = ({ postId, commentId, reply, history, from }) => {
     const user = auth.currentUser;
     const [isLiked, setIsLiked] = useState(null);
     const [isAddingReply, setIsAddingReply] = useState(false);
@@ -29,11 +29,11 @@ const CommentReply = ({ postId, commentId, reply, history }) => {
 
     const handleAddLike = value => {
         if (isLiked) return;
-        dispatch(likeReply(postId, commentId, reply.key, value));
+        dispatch(likeReply(postId, commentId, reply.key, value, from));
     };
 
     const handleDeleteReply = () => {
-        dispatch(deleteReply(postId, commentId, reply.key));
+        dispatch(deleteReply(postId, commentId, reply.key, from));
     };
 
     return (

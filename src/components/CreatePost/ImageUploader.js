@@ -23,7 +23,7 @@ const ImageUploader = ({ handleDrop, handleSelectFile, error }) => {
                         type="file"
                         name="file"
                         style={{ display: 'none' }}
-                        accept="video/mp4,image/jpeg,image/png,image/gif"
+                        accept="video/mp4,image/jpeg,image/png,image/gif,video/webm"
                         onChange={handleSelectFile}
                     />
                 </div>

@@ -1,7 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { withRouter } from 'react-router-dom';
 
-const ElementImage = ({ image, single, id, history }) => {
+const ElementImage = ({ image, single, id, history, from }) => {
     const [isCorrectHeight, setIsCorrectHeight] = useState(true);
     const [isImageExpanded, setIsImageExpanded] = useState(false);
     const imageEl = useRef(null);
@@ -12,7 +12,7 @@ const ElementImage = ({ image, single, id, history }) => {
 
     const handleOpenSinglePost = () => {
         if (single) return;
-        history.push(`/post/${id}`);
+        history.push(`/${from}/${id}`);
     };
 
     return (

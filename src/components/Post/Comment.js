@@ -7,7 +7,7 @@ import { auth } from '../../firebaseConfig';
 import CommentReply from './CommentReply';
 import CommentAddReply from './CommentAddReply';
 
-const Comment = ({ comment, history, postId }) => {
+const Comment = ({ comment, history, postId, from }) => {
     const user = auth.currentUser;
     const [isLiked, setIsLiked] = useState(null);
     const [isAddingReply, setIsAddingReply] = useState(false);
@@ -25,11 +25,11 @@ const Comment = ({ comment, history, postId }) => {
     };
 
     const handleAddLike = value => {
-        dispatch(likeComment(postId, comment.key, value));
+        dispatch(likeComment(postId, comment.key, value, from));
     };
 
     const handleDeleteComment = () => {
-        dispatch(deleteComment(postId, comment.key));
+        dispatch(deleteComment(postId, comment.key, from));
     };
 
     const stopAddReply = () => {
@@ -43,6 +43,7 @@ const Comment = ({ comment, history, postId }) => {
                 postId={postId}
                 commentId={comment.key}
                 reply={item}
+                from={from}
             />
         ));
 
@@ -127,6 +128,7 @@ const Comment = ({ comment, history, postId }) => {
                             stopAddReply={stopAddReply}
                             postId={postId}
                             commentId={comment.key}
+                            from={from}
                         />
                     )}
                     {comment.replies &&

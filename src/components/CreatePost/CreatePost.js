@@ -187,12 +187,13 @@ const CreatePost = () => {
             file.type !== 'image/jpeg' &&
             file.type !== 'image/png' &&
             file.type !== 'image/gif' &&
-            file.type !== 'video/mp4'
+            file.type !== 'video/mp4' &&
+            file.type !== 'video/webm'
         ) {
-            setFileError('Obsługiwane formaty to JPG, PNG, GIF, MP4');
+            setFileError('Obsługiwane formaty to JPG, PNG, GIF, MP4, WEBM');
             error = true;
-        } else if (file.size > 20 * 1024 * 1024) {
-            setFileError('Rozmiar nie może przekraczać 20MB!');
+        } else if (file.size > 10 * 1024 * 1024) {
+            setFileError('Rozmiar nie może przekraczać 10MB!');
             error = true;
         }
         if (error) return;

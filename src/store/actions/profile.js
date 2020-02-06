@@ -29,20 +29,28 @@ export const getProfile = id => dispatch => {
                             avatar,
                             desc: user.desc ? user.desc : '',
                             posts: null,
+                            admin: user.admin ? user.admin : false,
                         },
                     });
                 }
                 posts.reverse();
                 const resPosts = [];
                 let readyToSend = 0;
-                posts.forEach(post => {
+                posts.forEach(async post => {
+                    const from =
+                        post.status === 'waiting' ? 'posts' : 'mainPosts';
                     database
-                        .ref(`/posts/${post.key}`)
+                        .ref(`/${from}/${post.key}`)
                         .once('value', snapshot => {
-                            resPosts.push({ ...snapshot.val(), key: post.key });
+                            if (snapshot.val()) {
+                                resPosts.push({
+                                    ...snapshot.val(),
+                                    key: post.key,
+                                });
+                                readyToSend++;
+                            }
                         })
                         .then(() => {
-                            readyToSend++;
                             if (readyToSend === posts.length) {
                                 dispatch({
                                     type: GET_PROFILE,
@@ -51,6 +59,7 @@ export const getProfile = id => dispatch => {
                                         avatar,
                                         desc: user.desc ? user.desc : '',
                                         posts: resPosts,
+                                        admin: user.admin ? user.admin : false,
                                     },
                                 });
                             }

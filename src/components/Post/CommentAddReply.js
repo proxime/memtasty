@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { addReply } from '../../store/actions/posts';
 
-const CommentAddReply = ({ stopAddReply, postId, commentId }) => {
+const CommentAddReply = ({ stopAddReply, postId, commentId, from }) => {
     const [reply, setReply] = useState('');
     const [replyError, setReplyError] = useState('');
     const user = useSelector(state => state.auth.user);
@@ -11,7 +11,7 @@ const CommentAddReply = ({ stopAddReply, postId, commentId }) => {
 
     const handleAddReply = async e => {
         e.preventDefault();
-        await dispatch(addReply(postId, commentId, reply));
+        await dispatch(addReply(postId, commentId, reply, from));
         stopAddReply();
     };
 

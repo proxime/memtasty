@@ -12,8 +12,10 @@ const UserPosts = () => {
     const dispatch = useDispatch();
 
     useEffect(() => {
-        dispatch(getLoggedUserPosts());
-    }, [dispatch]);
+        if (!posts.length) {
+            dispatch(getLoggedUserPosts());
+        }
+    }, [dispatch, posts]);
 
     const renderPosts = () =>
         posts.map(post => <Element key={post.key} post={post} place="user" />);

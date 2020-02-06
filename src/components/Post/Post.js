@@ -12,7 +12,10 @@ const Post = ({ match }) => {
     const post = useSelector(state => state.posts.singlePost);
     const loading = useSelector(state => state.posts.loading);
     const userLoading = useSelector(state => state.auth.loading);
-
+    const from =
+        match.path === '/post' || match.path === '/post/:id'
+            ? 'posts'
+            : 'mainPosts';
     const dispatch = useDispatch();
 
     useEffect(() => {
@@ -22,9 +25,9 @@ const Post = ({ match }) => {
     }, []);
 
     useEffect(() => {
-        dispatch(getSinglePost(match.params.id));
+        dispatch(getSinglePost(match.params.id, from));
         setFirstRender(false);
-    }, [dispatch, match.params.id]);
+    }, [dispatch, match.params.id, from]);
 
     return (
         <div className="section">
@@ -34,7 +37,7 @@ const Post = ({ match }) => {
                 ) : (
                     <>
                         <Element post={post} place="single" single />
-                        <Comments postId={post.key} comments={post.comments} />
+                        <Comments postId={post.key} from={from} />
                     </>
                 )}
             </div>
