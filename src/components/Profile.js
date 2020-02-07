@@ -3,7 +3,6 @@ import { NavLink, Route, Redirect } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { getProfile } from '../store/actions/profile';
 import { auth } from '../firebaseConfig';
-import RecomendSection from './Elements/RecomendSection';
 import Spinner from './Spinner';
 import ProfilePosts from './Profile/ProfilePosts';
 import AdminPanel from './Profile/AdminPanel';
@@ -36,69 +35,62 @@ const Profile = ({ match }) => {
     }
 
     return (
-        <div className="section">
-            <div className="section__list">
-                {loading || userLoading || firstRender ? (
-                    <div className="user">
-                        <Spinner size={200} />
-                    </div>
-                ) : (
-                    <div className="user">
-                        <div className="user__profile">
-                            <div className="user__main">
-                                <div
-                                    className="user__avatar"
-                                    style={{
-                                        backgroundImage: `url(${profile.avatar})`,
-                                    }}
-                                ></div>
-                                <div className="user__info">
-                                    <div className="user__nick">
-                                        {profile.nick}
-                                    </div>
-                                </div>
-                            </div>
-                            {user && isAdmin && (
-                                <AdminPanel
-                                    id={match.params.id}
-                                    isAdmin={profile.admin}
-                                />
-                            )}
-                            {profile.desc && (
-                                <div className="user__desc">{profile.desc}</div>
-                            )}
-                            <div className="user__items">
-                                <div className="user__select">
-                                    <NavLink
-                                        to={`/profile/${match.params.id}`}
-                                        exact
-                                    >
-                                        Posty
-                                    </NavLink>
-                                    <NavLink
-                                        to={`/profile/${match.params.id}/comments`}
-                                    >
-                                        Komentarze
-                                    </NavLink>
-                                </div>
+        <div className="section__list">
+            {loading || userLoading || firstRender ? (
+                <div className="user">
+                    <Spinner size={200} />
+                </div>
+            ) : (
+                <div className="user">
+                    <div className="user__profile">
+                        <div className="user__main">
+                            <div
+                                className="user__avatar"
+                                style={{
+                                    backgroundImage: `url(${profile.avatar})`,
+                                }}
+                            ></div>
+                            <div className="user__info">
+                                <div className="user__nick">{profile.nick}</div>
                             </div>
                         </div>
-                        <Route
-                            path={`/profile/${match.params.id}`}
-                            exact
-                            render={() => (
-                                <ProfilePosts posts={profile.posts} />
-                            )}
-                        />
-                        {/* <Route
+                        {user && isAdmin && (
+                            <AdminPanel
+                                id={match.params.id}
+                                isAdmin={profile.admin}
+                            />
+                        )}
+                        {profile.desc && (
+                            <div className="user__desc">{profile.desc}</div>
+                        )}
+                        <div className="user__items">
+                            <div className="user__select">
+                                <NavLink
+                                    to={`/profile/${match.params.id}`}
+                                    exact
+                                >
+                                    Posty
+                                </NavLink>
+                                <NavLink
+                                    to={`/profile/${match.params.id}/comments`}
+                                >
+                                    Komentarze
+                                </NavLink>
+                            </div>
+                        </div>
+                    </div>
+                    <Route
+                        path={`/profile/${match.params.id}`}
+                        exact
+                        render={() => <ProfilePosts posts={profile.posts} />}
+                    />
+                    {/* <Route
                             path="/user/comments"
                             exact
                             component={UserComments}
                         /> */}
-                    </div>
-                )}
-            </div>
-            <RecomendSection />
+                </div>
+            )}
         </div>
     );
 };

@@ -291,6 +291,7 @@
         font-weight: 700;
         border: 1px solid white;
         padding: 7px 15px;
+        user-select: none;
         &:first-child {
             margin-left: 0;
         }

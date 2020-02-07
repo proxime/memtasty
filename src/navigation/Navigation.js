@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import NavigationSearch from './NavigationSearch';
+// import NavigationSearch from './NavigationSearch';
 import UserPanel from './UserPanel';
 import NavigationTopBar from './NavigationTopBar';
 import { Link } from 'react-router-dom';
@@ -38,7 +38,7 @@ const Navigation = () => {
                     MemTasty
                 </Link>
                 <div className="navigation__tools"></div>
-                <NavigationSearch />
+                {/* <NavigationSearch /> */}
                 <UserPanel />
             </div>
         </nav>

@@ -5,7 +5,7 @@ import 'video-react/dist/video-react.css';
 
 import Navigation from './navigation/Navigation';
 import Auth from './components/Auth/Auth';
-import Routes from './components/Routes';
+import Section from './components/Section';
 import Alert from './components/Alert';
 import { BrowserRouter as Router } from 'react-router-dom';
 import { Provider } from 'react-redux';
@@ -21,7 +21,7 @@ const App = () => {
                 <Navigation />
                 <Alert />
                 <Auth />
-                <Routes />
+                <Section />
             </Router>
         </Provider>
     );

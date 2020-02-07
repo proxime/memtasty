@@ -1,14 +1,22 @@
 .section {
     display: flex;
     justify-content: space-between;
-    padding: 120px 10px 30px;
+    padding: 120px 30px 30px;
     max-width: $max-width;
     margin: 0 auto;
     color: white;
+    @media (max-width: 499px) {
+        padding: 70px 10px 30px;
+    }
     &__list {
         flex-grow: 1;
         max-width: 670px;
         padding: 20px;
+        padding-left: 0;
+        @media (max-width: 1023px) {
+            padding-right: 0;
+            margin: 0 auto;
+        }
     }
     &__recommended {
         flex-grow: 1;
@@ -60,15 +68,25 @@
 .element {
     padding: 30px;
     border-bottom: 1px solid rgba(255, 255, 255, 0.5);
+    @media (max-width: 600px) {
+        padding: 30px 10px;
+    }
     &__top {
         display: flex;
         align-items: center;
         margin-bottom: 10px;
+        @media (max-width: 499px) {
+            flex-direction: column;
+            align-items: flex-start;
+        }
     }
     &__author {
         display: flex;
         flex-grow: 1;
         user-select: none;
+        @media (max-width: 499px) {
+            order: 1;
+        }
     }
     &__author-avatar {
         width: 45px;
@@ -94,6 +112,9 @@
     &__date {
         color: #bbb;
         font-size: 1.1rem;
+        @media (max-width: 499px) {
+            margin-bottom: 10px;
+        }
     }
     &__title {
         font-size: 2rem;
@@ -181,10 +202,16 @@
         display: flex;
         flex-grow: 1;
         justify-content: flex-end;
+        @media (max-width: 499px) {
+            justify-content: flex-start;
+        }
     }
     &__summary {
         display: flex;
         font-size: 1.7rem;
+        @media (max-width: 499px) {
+            flex-direction: column;
+        }
     }
     &__action {
         display: flex;
@@ -195,6 +222,12 @@
         border: 1px solid white;
         width: 50px;
         height: 35px;
+        &:first-child {
+            margin-left: 0;
+        }
+        &:last-child {
+            margin-right: 0;
+        }
         &:hover {
             border-color: #bbb;
             color: #bbb;
@@ -381,6 +414,9 @@
     &__summary {
         display: flex;
         font-size: 1.2rem;
+        @media (max-width: 499px) {
+            flex-direction: column;
+        }
     }
     &__reply {
         color: #bbb;
@@ -393,6 +429,10 @@
         flex-grow: 1;
         display: flex;
         justify-content: flex-end;
+        @media (max-width: 499px) {
+            justify-content: flex-start;
+            margin-bottom: 5px;
+        }
     }
     &__points {
         padding: 4px 0;
@@ -419,6 +459,9 @@
             color: $primary-color;
             border-color: $primary-color;
         }
+        @media (max-width: 499px) {
+            height: auto;
+        }
     }
     &__replies {
         border-left: 1px solid white;
@@ -431,6 +474,9 @@
     }
     &__settings {
         display: flex;
+        @media (max-width: 499px) {
+            order: 1;
+        }
         p {
             margin-right: 8px;
         }

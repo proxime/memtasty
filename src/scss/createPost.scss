@@ -10,6 +10,9 @@
         border: 1px solid white;
         padding-top: 50%;
         margin-bottom: 30px;
+        @media (max-width: 499px) {
+            padding-top: 60%;
+        }
     }
     &__file-content {
         position: absolute;
@@ -30,12 +33,18 @@
         }
     }
     &__file-icon {
-        font-size: 7rem;
+        font-size: 6rem;
         margin-bottom: 20px;
+        @media (max-width: 499px) {
+            margin-bottom: 7px;
+        }
     }
     &__file-text {
         font-size: 1.7rem;
         margin-bottom: 13px;
+        @media (max-width: 499px) {
+            margin-bottom: 10px;
+        }
     }
     &__file-button {
         cursor: pointer;

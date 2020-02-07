@@ -41,7 +41,6 @@ export const getProfile = id => dispatch => {
                     database
                         .ref(`/${from}/${post.key}`)
                         .once('value', snapshot => {
-                            console.log(snapshot.val());
                             if (snapshot.val()) {
                                 resPosts.push({
                                     ...snapshot.val(),

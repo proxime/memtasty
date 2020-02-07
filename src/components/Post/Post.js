@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { getSinglePost } from '../../store/actions/posts';
 
-import RecomendSection from '../Elements/RecomendSection';
 import Element from '../Elements/Element';
 import Spinner from '../Spinner';
 import Comments from './Comments';
@@ -30,20 +29,17 @@ const Post = ({ match }) => {
     }, [dispatch, match.params.id, from]);
 
     return (
-        <div className="section">
-            <div className="section__list">
-                {firstRender || loading || userLoading ? (
-                    <Spinner size={250} />
-                ) : !post ? (
-                    <p>brak wyników</p>
-                ) : (
-                    <>
-                        <Element post={post} place="single" single />
-                        <Comments postId={post.key} from={from} />
-                    </>
-                )}
-            </div>
-            <RecomendSection />
+        <div className="section__list">
+            {firstRender || loading || userLoading ? (
+                <Spinner size={250} />
+            ) : !post ? (
+                <p>brak wyników</p>
+            ) : (
+                <>
+                    <Element post={post} place="single" single />
+                    <Comments postId={post.key} from={from} />
+                </>
+            )}
         </div>
     );
 };

@@ -1,5 +1,4 @@
 import React, { useEffect } from 'react';
-import RecomendSection from '../Elements/RecomendSection';
 import { Redirect } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import Spinner from '../Spinner';
@@ -22,22 +21,19 @@ const User = () => {
     }
 
     return (
-        <div className="section">
-            <div className="section__list">
-                {loading ? (
-                    <div className="user">
-                        <Spinner size={200} />
-                    </div>
-                ) : (
-                    <div className="user">
-                        <Switch>
-                            <Route path="/user/settings" component={Settings} />
-                            <Route path="/user" component={UserProfile} />
-                        </Switch>
-                    </div>
-                )}
-            </div>
-            <RecomendSection />
+        <div className="section__list">
+            {loading ? (
+                <div className="user">
+                    <Spinner size={200} />
+                </div>
+            ) : (
+                <div className="user">
+                    <Switch>
+                        <Route path="/user/settings" component={Settings} />
+                        <Route path="/user" component={UserProfile} />
+                    </Switch>
+                </div>
+            )}
         </div>
     );
 };

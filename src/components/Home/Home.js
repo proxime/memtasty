@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import Element from '../Elements/Element';
-import RecomendSection from '../Elements/RecomendSection';
 import { useSelector, useDispatch } from 'react-redux';
 import { getPosts } from '../../store/actions/posts';
 import { Redirect, withRouter } from 'react-router-dom';
@@ -82,27 +81,22 @@ const Home = props => {
         ));
     };
 
-    return (
-        <div className="section">
-            {isLoading ? (
-                <div className="section__list">
-                    <Spinner size={200} />
-                </div>
-            ) : (
-                <div className="section__list">
-                    {renderPosts()}
-                    <div
-                        className="section__next-page"
-                        onClick={() => handleChangePage(page + 1)}
-                    >
-                        {page === allPages
-                            ? 'Wróć na pierwszą stronę'
-                            : 'Następna Strona'}
-                    </div>
-                    <div className="section__pages">{getPagesNumbers()}</div>
-                </div>
-            )}
-            <RecomendSection />
+    return isLoading ? (
+        <div className="section__list">
+            <Spinner size={200} />
+        </div>
+    ) : (
+        <div className="section__list">
+            {renderPosts()}
+            <div
+                className="section__next-page"
+                onClick={() => handleChangePage(page + 1)}
+            >
+                {page === allPages
+                    ? 'Wróć na pierwszą stronę'
+                    : 'Następna Strona'}
+            </div>
+            <div className="section__pages">{getPagesNumbers()}</div>
         </div>
     );
 };

@@ -3,7 +3,6 @@ import { Redirect } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import Spinner from '../Spinner';
 
-import RecomendSection from '../Elements/RecomendSection';
 import ImageUploader from './ImageUploader';
 import CreatePostInput from './CreatePostInput';
 import TextArea from './TextArea';
@@ -228,84 +227,79 @@ const CreatePost = () => {
     };
 
     return (
-        <div className="section">
-            <div className="section__list">
-                {loading ? (
-                    <div className="create-post">
-                        <Spinner size={200} />
-                    </div>
-                ) : (
-                    <div className="create-post">
-                        {postsLoadnig ? (
-                            <PostLoadnig changeProggress={uploadProggress} />
-                        ) : (
-                            <>
-                                <div className="create-post__title">
+        <div className="section__list">
+            {loading ? (
+                <div className="create-post">
+                    <Spinner size={200} />
+                </div>
+            ) : (
+                <div className="create-post">
+                    {postsLoadnig ? (
+                        <PostLoadnig changeProggress={uploadProggress} />
+                    ) : (
+                        <>
+                            <div className="create-post__title">Dodaj Post</div>
+                            <div className="create-post__main">
+                                <CreatePostInput
+                                    title="Tytuł"
+                                    type="text"
+                                    name="title"
+                                    value={title}
+                                    handleChangeData={handleChangeData}
+                                    error={errors.title}
+                                />
+                                <TextArea
+                                    value={desc}
+                                    handleChangeData={handleChangeData}
+                                    name="desc"
+                                    error={errors.desc}
+                                />
+                                {file ? (
+                                    <UploadedImage
+                                        file={file}
+                                        fileError={fileError}
+                                        handleSelectFile={handleSelectFile}
+                                    />
+                                ) : (
+                                    <ImageUploader
+                                        handleDrop={handleDrop}
+                                        handleSelectFile={handleSelectFile}
+                                        error={fileError}
+                                    />
+                                )}
+                                <TagsInput
+                                    name="tags"
+                                    value={tags}
+                                    handleChangeData={handleChangeData}
+                                    onEnter={handleAddTaggs}
+                                    addedTags={addedTags}
+                                    onRemove={handleRemoveTaggs}
+                                    error={errors.tags}
+                                />
+                                <div className="create-post__double-item">
+                                    <Checkbox
+                                        checked={is18}
+                                        name="is18"
+                                        handleChangeData={handleChangeData}
+                                    />
+                                    <SelectInput
+                                        value={category}
+                                        name="category"
+                                        handleChangeData={handleChangeData}
+                                        error={errors.category}
+                                    />
+                                </div>
+                                <div
+                                    className="create-post__button"
+                                    onClick={addNewPost}
+                                >
                                     Dodaj Post
                                 </div>
-                                <div className="create-post__main">
-                                    <CreatePostInput
-                                        title="Tytuł"
-                                        type="text"
-                                        name="title"
-                                        value={title}
-                                        handleChangeData={handleChangeData}
-                                        error={errors.title}
-                                    />
-                                    <TextArea
-                                        value={desc}
-                                        handleChangeData={handleChangeData}
-                                        name="desc"
-                                        error={errors.desc}
-                                    />
-                                    {file ? (
-                                        <UploadedImage
-                                            file={file}
-                                            fileError={fileError}
-                                            handleSelectFile={handleSelectFile}
-                                        />
-                                    ) : (
-                                        <ImageUploader
-                                            handleDrop={handleDrop}
-                                            handleSelectFile={handleSelectFile}
-                                            error={fileError}
-                                        />
-                                    )}
-                                    <TagsInput
-                                        name="tags"
-                                        value={tags}
-                                        handleChangeData={handleChangeData}
-                                        onEnter={handleAddTaggs}
-                                        addedTags={addedTags}
-                                        onRemove={handleRemoveTaggs}
-                                        error={errors.tags}
-                                    />
-                                    <div className="create-post__double-item">
-                                        <Checkbox
-                                            checked={is18}
-                                            name="is18"
-                                            handleChangeData={handleChangeData}
-                                        />
-                                        <SelectInput
-                                            value={category}
-                                            name="category"
-                                            handleChangeData={handleChangeData}
-                                            error={errors.category}
-                                        />
-                                    </div>
-                                    <div
-                                        className="create-post__button"
-                                        onClick={addNewPost}
-                                    >
-                                        Dodaj Post
-                                    </div>
-                                </div>
-                            </>
-                        )}
-                    </div>
-                )}
-            </div>
-            <RecomendSection />
+                            </div>
+                        </>
+                    )}
+                </div>
+            )}
         </div>
     );
 };

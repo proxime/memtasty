@@ -659,7 +659,6 @@ export const deletePost = (postId, place, history) => dispatch => {
         .ref(`/${from}/${postId}`)
         .once('value', snapshot => {
             const post = snapshot.val();
-            console.log(post);
             if (!post) return;
             database.ref(`/${from}/${postId}`).remove();
             database.ref(`/users/${post.owner}/posts/${postId}`).remove();
