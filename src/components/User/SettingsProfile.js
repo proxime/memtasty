@@ -11,6 +11,7 @@ const SettingsProfile = () => {
     const [nick, setNick] = useState('');
     const [desc, setDesc] = useState('');
     const [avatar, setAvatar] = useState('');
+    const [avatarUrl, setAvatarUrl] = useState('');
 
     const [validateErrors, setValidateErrors] = useState({
         nick: '',
@@ -22,18 +23,34 @@ const SettingsProfile = () => {
     useEffect(() => {
         setNick(user.nick);
         setAvatar('');
+        setAvatarUrl('');
         if (user.desc) setDesc(user.desc);
     }, [user.nick, user.desc, user.avatar]);
 
     const dispatch = useDispatch();
 
+    const readFileUrl = file => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+
+        reader.onloadend = () => {
+            setAvatarUrl(reader.result);
+        };
+    };
+
     const handleChangeAvatar = e => {
         setAvatar(e.target.files[0]);
+        if (e.target.files[0]) {
+            readFileUrl(e.target.files[0]);
+        } else {
+            setAvatarUrl('');
+        }
     };
 
     const handleResetChanges = () => {
         setNick(user.nick);
         setAvatar('');
+        setAvatarUrl('');
         if (user.desc) setDesc(user.desc);
         else setDesc('');
         setValidateErrors({
@@ -83,6 +100,7 @@ const SettingsProfile = () => {
         const resetData = () => {
             setNick(user.nick);
             setAvatar('');
+            setAvatarUrl('');
             if (user.desc) setDesc(user.desc);
             else setDesc('');
         };
@@ -100,6 +118,7 @@ const SettingsProfile = () => {
             } else {
                 setNick(user.nick);
                 setAvatar('');
+                setAvatarUrl('');
             }
         } catch (err) {
             resetData();
@@ -135,7 +154,11 @@ const SettingsProfile = () => {
                     <div className="settings__avatar-container">
                         <div
                             className="settings__avatar"
-                            style={{ backgroundImage: `url(${user.avatar})` }}
+                            style={{
+                                backgroundImage: `url(${
+                                    avatarUrl ? avatarUrl : user.avatar
+                                })`,
+                            }}
                         ></div>
                         <div className="settings__change-avatar">
                             <label>

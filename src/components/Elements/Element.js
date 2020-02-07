@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, withRouter } from 'react-router-dom';
 import { getElapsedTime } from '../../timeFunctions';
 import { useSelector, useDispatch } from 'react-redux';
 import { addPostToMain, deletePost } from '../../store/actions/posts';
@@ -7,7 +7,7 @@ import ElementSummary from './ElementSummary';
 import ElementImage from './ElementImage';
 import ElementVideo from './ElementVideo';
 
-const Element = ({ post, place, single }) => {
+const Element = ({ post, place, single, history }) => {
     const from = post.status === 'main' ? 'mainPost' : 'post';
     const isAdmin = useSelector(state => {
         if (state.auth.user) return state.auth.user.admin;
@@ -17,11 +17,11 @@ const Element = ({ post, place, single }) => {
     const dispatch = useDispatch();
 
     const handleAddPostToMain = () => {
-        dispatch(addPostToMain(post.key));
+        dispatch(addPostToMain(post.key, history));
     };
 
     const handleRemovePost = () => {
-        dispatch(deletePost(post.key, from));
+        dispatch(deletePost(post.key, from, history));
     };
 
     const renderContent = () => {
@@ -134,4 +134,4 @@ const Element = ({ post, place, single }) => {
     );
 };
 
-export default Element;
+export default withRouter(Element);

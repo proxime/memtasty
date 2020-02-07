@@ -16,6 +16,7 @@ import {
     LIKE_REPLY,
     ADD_REPLY,
     DELETE_REPLY,
+    ADD_POST_TO_MAIN,
 } from '../actions/types';
 
 const initState = {
@@ -215,6 +216,20 @@ export default (state = initState, action) => {
                     ...state.singlePost,
                     comments: deleteReplies,
                 },
+            };
+        case ADD_POST_TO_MAIN:
+            const singlePostId = state.singlePost.key;
+            const updatedDownloadedPosts = [...state.downloadedPosts].map(
+                item => {
+                    if (item.key === singlePostId) {
+                        item.status = 'main';
+                    }
+                    return item;
+                }
+            );
+            return {
+                ...state,
+                downloadedPosts: updatedDownloadedPosts,
             };
         default:
             return state;

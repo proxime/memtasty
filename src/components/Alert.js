@@ -1,20 +1,37 @@
 import React from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { CLOSE_ALERT } from '../store/actions/types';
 
-const Alert = ({ status, message }) => {
+const Alert = () => {
+    const alert = useSelector(state => state.alert);
+    const dispatch = useDispatch();
+
+    const handleCloseAlert = () => {
+        dispatch({ type: CLOSE_ALERT });
+        if (alert.func) {
+            alert.func();
+        }
+    };
+
+    if (!alert.open) return null;
+
     return (
-        <div className={`alert ${status === 'ok' ? '' : 'alert-wrong'}`}>
-            <div className="alert__icon">
-                {status === 'ok' ? (
-                    <i className="fas fa-check"></i>
-                ) : (
-                    <i className="fas fa-exclamation-triangle"></i>
-                )}
+        <>
+            <div className="alert__popup">
+                <div className="alert">
+                    <div className="alert__title">{alert.title}</div>
+                    <div className="alert__desc">{alert.msg}</div>
+                    <div className="alert__button-container">
+                        <div
+                            className="alert__button"
+                            onClick={handleCloseAlert}
+                        >
+                            Rozumiem
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div className="alert__text">{message}</div>
-            <div className="alert__close">
-                <i className="fas fa-times"></i>
-            </div>
-        </div>
+        </>
     );
 };
 

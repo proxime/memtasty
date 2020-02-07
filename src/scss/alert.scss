@@ -1,32 +1,46 @@
 .alert {
-    position: relative;
+    margin: 80px auto 40px;
+    padding: 40px 40px;
+    padding-bottom: 30px;
+    background-color: #fff;
     width: 100%;
-    font-size: 2rem;
-    font-weight: 300;
-    display: flex;
-    align-items: center;
-    background-color: green;
-    padding: 10px;
-    &-wrong {
-        background-color: red;
+    max-width: 550px;
+    &__title {
+        font-size: 3.3rem;
+        font-weight: 700;
+        padding: 10px 0;
+        letter-spacing: 0.7px;
+        color: black;
     }
-    &__icon {
-        border-radius: 50%;
-        width: 30px;
-        height: 30px;
+    &__desc {
+        font-size: 1.6rem;
+        padding: 10px 0;
+        color: black;
+        margin-bottom: 25px;
+    }
+    &__button-container {
         display: flex;
-        align-items: center;
-        justify-content: center;
-        margin-right: 15px;
-        font-size: 2.4rem;
+        padding-bottom: 10px;
     }
-    &__close {
-        position: absolute;
-        right: 10px;
-        top: 5px;
+    &__button {
+        color: white;
+        background-color: $primary-color;
+        padding: 9px 13px;
+        font-size: 1.5rem;
+        font-weight: 700;
         cursor: pointer;
-        &:hover {
-            color: #ddd;
-        }
+        border: none;
+        outline: none;
+        user-select: none;
+    }
+    &__popup {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        overflow-y: scroll;
+        z-index: 20;
     }
 }

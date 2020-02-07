@@ -14,8 +14,10 @@ import {
     ADD_REPLY,
     LIKE_REPLY,
     DELETE_REPLY,
+    ADD_POST_TO_MAIN,
 } from './types';
 import { toggleLoginWindow } from './auth';
+import { setAlert } from './alert';
 import { auth, storage, database } from '../../firebaseConfig';
 import uuidv4 from 'uuid/v4';
 
@@ -85,6 +87,12 @@ export const createPost = (
                     dispatch({
                         type: CREATE_POST,
                     });
+                    dispatch(
+                        setAlert(
+                            'Sukces!',
+                            'Twój post został pomyślnie dodany. Możesz go znaleźć w poczekalni, jeśli spodoba się naszym użytkownikom trafi na stronę główną!'
+                        )
+                    );
                 } catch (err) {
                     dispatch({ type: SET_POST_LOADING, payload: false });
                 }
@@ -484,6 +492,9 @@ export const deleteComment = (postId, commentId, from) => dispatch => {
                 type: DELETE_COMMENT,
                 payload: commentId,
             });
+            dispatch(
+                setAlert('Sukces!', 'Twój komentarz został pomyslnie usunięty')
+            );
         })
         .catch(err => {
             console.log(err);
@@ -598,13 +609,19 @@ export const deleteReply = (postId, commentId, replyId, from) => dispatch => {
                     replyId,
                 },
             });
+            dispatch(
+                setAlert(
+                    'Sukces!',
+                    'Twoja odpowiedź do komentarza została pomyslnie usunięta'
+                )
+            );
         })
         .catch(err => {
             console.log(err);
         });
 };
 
-export const addPostToMain = postId => dispatch => {
+export const addPostToMain = (postId, history) => dispatch => {
     database.ref(`/posts/${postId}`).once('value', snapshot => {
         const post = snapshot.val();
         if (!post) return;
@@ -618,7 +635,14 @@ export const addPostToMain = postId => dispatch => {
                     .ref(`/posts/${postId}`)
                     .remove()
                     .then(() => {
-                        console.log('success');
+                        dispatch({ type: ADD_POST_TO_MAIN });
+                        dispatch(
+                            setAlert(
+                                'Sukces!',
+                                'Post został pomyslnie dodany do strony głównej',
+                                () => history.push(`/mainPost/${postId}`)
+                            )
+                        );
                     });
 
                 database
@@ -628,8 +652,9 @@ export const addPostToMain = postId => dispatch => {
     });
 };
 
-export const deletePost = (postId, place) => dispatch => {
+export const deletePost = (postId, place, history) => dispatch => {
     const from = place === 'post' ? 'posts' : 'mainPosts';
+    const backTo = place === 'post' ? '/waiting' : '/';
     database
         .ref(`/${from}/${postId}`)
         .once('value', snapshot => {
@@ -640,6 +665,11 @@ export const deletePost = (postId, place) => dispatch => {
             database.ref(`/users/${post.owner}/posts/${postId}`).remove();
         })
         .then(() => {
+            dispatch(
+                setAlert('Sukces!', 'Post został pomyslnie usunięty', () => {
+                    history.push(`${backTo}`);
+                })
+            );
             storage
                 .ref(`/content/${postId}`)
                 .delete()

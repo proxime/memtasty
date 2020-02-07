@@ -12,7 +12,6 @@ export const getProfile = id => dispatch => {
         const avatar = user.avatar
             ? user.avatar
             : await storage.ref('/avatars/default.jpg').getDownloadURL();
-
         database
             .ref(`/users/${id}/posts`)
             .orderByChild('date')
@@ -42,6 +41,7 @@ export const getProfile = id => dispatch => {
                     database
                         .ref(`/${from}/${post.key}`)
                         .once('value', snapshot => {
+                            console.log(snapshot.val());
                             if (snapshot.val()) {
                                 resPosts.push({
                                     ...snapshot.val(),

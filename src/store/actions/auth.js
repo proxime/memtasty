@@ -12,6 +12,7 @@ import {
     CHANGE_ACCOUNT_DATA,
     TOGGLE_LOGIN_WINDOW,
 } from './types';
+import { setAlert } from './alert';
 
 export const toggleLoginWindow = window => dispatch => {
     dispatch({
@@ -79,7 +80,7 @@ export const createAccount = async (email, password, nick) => {
     }
 };
 
-export const login = (email, password) => async () => {
+export const login = (email, password) => async dispatch => {
     try {
         await auth.signInWithEmailAndPassword(email, password);
         return {
@@ -89,7 +90,8 @@ export const login = (email, password) => async () => {
         let error = '';
         switch (err.code) {
             case 'auth/user-disabled':
-                error = { other: 'To konto zostało zablokowane' };
+                dispatch(toggleLoginWindow(null));
+                dispatch(setAlert('Błąd!', 'Twoje konto zostało zablokowane!'));
                 break;
             case 'auth/invalid-email':
                 error = { email: 'Podaj prawidłowy adres E-mail' };
@@ -178,6 +180,12 @@ export const changeProfileData = (
                             type: CHANGE_PROFILE_DATA,
                             payload: data,
                         });
+                        dispatch(
+                            setAlert(
+                                'Sukces!',
+                                'Twój profil został pomyslnie zaaktualizowany!'
+                            )
+                        );
                     } catch (err) {
                         dispatch({ type: SET_SETTING_LOAING, payload: false });
                     }
@@ -189,6 +197,12 @@ export const changeProfileData = (
                 type: CHANGE_PROFILE_DATA,
                 payload: data,
             });
+            dispatch(
+                setAlert(
+                    'Sukces!',
+                    'Twój profil został pomyslnie zaaktualizowany!'
+                )
+            );
         }
         return {
             status: 'ok',
@@ -224,6 +238,12 @@ export const changeAccountData = (
             await user.updatePassword(newPassword);
         }
         dispatch({ type: CHANGE_ACCOUNT_DATA, payload: email });
+        dispatch(
+            setAlert(
+                'Sukces!',
+                'Twoje konto zostało pomyślnie zaaktualizowane!'
+            )
+        );
 
         return {
             status: 'ok',
@@ -257,5 +277,55 @@ export const changeAccountData = (
 
 export const addAdmin = id => dispatch => {
     const addAdminRole = functions.httpsCallable('addAdminRole');
-    addAdminRole({ id }).then(res => console.log(res));
+    addAdminRole({ id }).then(() => {
+        dispatch(
+            setAlert('Sukces!', 'Pomyślnie dodałeś nowego administratora!')
+        );
+    });
+};
+
+export const removeAdmin = id => dispatch => {
+    const addAdminRole = functions.httpsCallable('removeAdminRole');
+    addAdminRole({ id }).then(() => {
+        dispatch(
+            setAlert('Sukces!', 'Pomyślnie dodałeś nowego administratora!')
+        );
+    });
+};
+
+export const createHeadAdmin = id => dispatch => {
+    const addAdminRole = functions.httpsCallable('createHeadAdmin');
+    addAdminRole({ id }).then(() => {
+        dispatch(
+            setAlert(
+                'Sukces!',
+                'Pomyślnie dodałeś nowego głównego administratora!'
+            )
+        );
+    });
+};
+
+export const disableUser = id => dispatch => {
+    const disable = functions.httpsCallable('disableUser');
+    disable({ id }).then(res => {
+        if (res.data === 'isAdmin') {
+            dispatch(
+                setAlert(
+                    'Błąd!',
+                    'Nie możesz zablokować użytkownika, który jest administratorem!'
+                )
+            );
+        } else if (res.data === 'Success') {
+            dispatch(
+                setAlert('Sukces!', 'Pomyślnie zablokowałeś tego użytkownika')
+            );
+        } else {
+            dispatch(
+                setAlert(
+                    'Błąd!',
+                    'Nie masz odpowiednich uprawnień aby to zrobić!'
+                )
+            );
+        }
+    });
 };

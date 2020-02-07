@@ -6,9 +6,16 @@ export const authStateListener = () => {
     auth.onAuthStateChanged(async user => {
         if (user) {
             let admin = false;
+            let headAdmin = false;
             user.getIdTokenResult().then(async idToknResult => {
-                if (idToknResult.claims.admin) {
+                if (
+                    idToknResult.claims.admin ||
+                    idToknResult.claims.headAdmin
+                ) {
                     admin = true;
+                }
+                if (idToknResult.claims.headAdmin) {
+                    headAdmin = true;
                 }
 
                 let thisUser = await database
@@ -26,6 +33,7 @@ export const authStateListener = () => {
                         emailVerified: user.emailVerified,
                         desc: thisUser.desc ? thisUser.desc : '',
                         admin,
+                        headAdmin,
                     },
                 });
 

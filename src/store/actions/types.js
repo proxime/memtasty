@@ -23,3 +23,6 @@ export const DELETE_COMMENT = 'DELETE_COMMENT';
 export const ADD_REPLY = 'ADD_REPLY';
 export const LIKE_REPLY = 'LIKE_REPLY';
 export const DELETE_REPLY = 'DELETE_REPLY';
+export const SET_ALERT = 'SET_ALERT';
+export const CLOSE_ALERT = 'CLOSE_ALERT';
+export const ADD_POST_TO_MAIN = 'ADD_POST_TO_MAIN';
