@@ -24,7 +24,8 @@
         padding: 20px;
         padding-right: 0;
     }
-    &__next-page {
+    &__next-page,
+    &__back {
         width: 100%;
         height: 50px;
         border: 2px solid $primary-color;
@@ -37,10 +38,13 @@
         margin-top: 30px;
         margin-bottom: 20px;
         user-select: none;
+        display: block;
+        text-decoration: none;
     }
     &__pages {
         display: flex;
         margin-bottom: 20px;
+        margin-top: 15px;
     }
     &__page {
         text-align: center;

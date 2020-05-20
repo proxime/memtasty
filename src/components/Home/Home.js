@@ -5,10 +5,10 @@ import { getPosts } from '../../store/actions/posts';
 import { Redirect, withRouter } from 'react-router-dom';
 import Spinner from '../Spinner';
 
-const Home = props => {
-    const posts = useSelector(state => state.posts.downloadedPosts);
-    const isLoading = useSelector(state => state.posts.loading);
-    const allPages = useSelector(state => state.posts.pages);
+const Home = (props) => {
+    const posts = useSelector((state) => state.posts.downloadedPosts);
+    const isLoading = useSelector((state) => state.posts.loading);
+    const allPages = useSelector((state) => state.posts.pages);
     const [page, setPage] = useState(
         props.match.params.id &&
             !isNaN(Number(props.match.params.id)) &&
@@ -45,9 +45,11 @@ const Home = props => {
     }
 
     const renderPosts = () =>
-        posts.map(post => <Element key={post.key} post={post} place="home" />);
+        posts.map((post) => (
+            <Element key={post.key} post={post} place="home" />
+        ));
 
-    const handleChangePage = newPage => {
+    const handleChangePage = (newPage) => {
         if (newPage > allPages) {
             props.history.push(`/1`);
             setPage(1);
@@ -70,7 +72,7 @@ const Home = props => {
             } else break;
         }
 
-        return pages.map(val => (
+        return pages.map((val) => (
             <div
                 key={val}
                 className={`section__page ${val === page ? 'active' : ''}`}
@@ -88,14 +90,14 @@ const Home = props => {
     ) : (
         <div className="section__list">
             {renderPosts()}
-            <div
-                className="section__next-page"
-                onClick={() => handleChangePage(page + 1)}
-            >
-                {page === allPages
-                    ? 'Wróć na pierwszą stronę'
-                    : 'Następna Strona'}
-            </div>
+            {page !== allPages && (
+                <div
+                    className="section__next-page"
+                    onClick={() => handleChangePage(page + 1)}
+                >
+                    Następna strona
+                </div>
+            )}
             <div className="section__pages">{getPagesNumbers()}</div>
         </div>
     );

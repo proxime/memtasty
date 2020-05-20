@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import CommentAddReply from './CommentAddReply';
 import { getElapsedTime } from '../../timeFunctions';
 import { likeReply, deleteReply } from '../../store/actions/posts';
 import { Link, withRouter } from 'react-router-dom';
@@ -9,8 +8,7 @@ import { auth } from '../../firebaseConfig';
 const CommentReply = ({ postId, commentId, reply, history, from }) => {
     const user = auth.currentUser;
     const [isLiked, setIsLiked] = useState(null);
-    const [isAddingReply, setIsAddingReply] = useState(false);
-    const likedComments = useSelector(state => state.posts.myCommentLikes);
+    const likedComments = useSelector((state) => state.posts.myCommentLikes);
     const dispatch = useDispatch();
 
     useEffect(() => {
@@ -19,15 +17,11 @@ const CommentReply = ({ postId, commentId, reply, history, from }) => {
         }
     }, [likedComments, reply.key]);
 
-    const stopAddReply = () => {
-        setIsAddingReply(false);
-    };
-
     const handleRedirectToProfile = () => {
         history.push(`/profile/${reply.owner}`);
     };
 
-    const handleAddLike = value => {
+    const handleAddLike = (value) => {
         if (isLiked) return;
         dispatch(likeReply(postId, commentId, reply.key, value, from));
     };
@@ -61,25 +55,14 @@ const CommentReply = ({ postId, commentId, reply, history, from }) => {
                         </div>
                         <div className="comment__text">{reply.comment}</div>
                         <div className="comment__summary">
-                            {user && (
+                            {user && user.uid === reply.owner && (
                                 <div className="comment__settings">
                                     <p
                                         className="comment__reply"
-                                        onClick={() => setIsAddingReply(true)}
+                                        onClick={handleDeleteReply}
                                     >
-                                        Odpowiedz
+                                        Usuń
                                     </p>
-                                    {user && user.uid === reply.owner && (
-                                        <p className="comment__reply">Edytuj</p>
-                                    )}
-                                    {user && user.uid === reply.owner && (
-                                        <p
-                                            className="comment__reply"
-                                            onClick={handleDeleteReply}
-                                        >
-                                            Usuń
-                                        </p>
-                                    )}
                                 </div>
                             )}
                             <div className="comment__actions">
@@ -115,13 +98,6 @@ const CommentReply = ({ postId, commentId, reply, history, from }) => {
                     </div>
                 </div>
             </div>
-            {isAddingReply && (
-                <CommentAddReply
-                    stopAddReply={stopAddReply}
-                    postId={postId}
-                    commentId={commentId}
-                />
-            )}
         </>
     );
 };

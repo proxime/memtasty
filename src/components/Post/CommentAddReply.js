@@ -4,18 +4,17 @@ import { addReply } from '../../store/actions/posts';
 
 const CommentAddReply = ({ stopAddReply, postId, commentId, from }) => {
     const [reply, setReply] = useState('');
-    const [replyError, setReplyError] = useState('');
-    const user = useSelector(state => state.auth.user);
+    const user = useSelector((state) => state.auth.user);
 
     const dispatch = useDispatch();
 
-    const handleAddReply = async e => {
+    const handleAddReply = async (e) => {
         e.preventDefault();
         await dispatch(addReply(postId, commentId, reply, from));
         stopAddReply();
     };
 
-    const handleChangeReply = async e => {
+    const handleChangeReply = async (e) => {
         setReply(e.target.value);
     };
 
@@ -43,9 +42,6 @@ const CommentAddReply = ({ stopAddReply, postId, commentId, from }) => {
                         <button className="comments__add-button">
                             Odpowiedz
                         </button>
-                        {replyError && (
-                            <div className="comments__error">{replyError}</div>
-                        )}
                     </div>
                 </form>
             </div>

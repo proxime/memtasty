@@ -1,13 +1,13 @@
-import { auth, database, storage } from './firebaseConfig';
+import { auth, database } from './firebaseConfig';
 import { SET_USER, UNSET_USER, GET_USER_LIKES } from './store/actions/types';
 import store from './store/store';
 
 export const authStateListener = () => {
-    auth.onAuthStateChanged(async user => {
+    auth.onAuthStateChanged(async (user) => {
         if (user) {
             let admin = false;
             let headAdmin = false;
-            user.getIdTokenResult().then(async idToknResult => {
+            user.getIdTokenResult().then(async (idToknResult) => {
                 if (
                     idToknResult.claims.admin ||
                     idToknResult.claims.headAdmin
@@ -39,7 +39,7 @@ export const authStateListener = () => {
 
                 database
                     .ref(`/users/${user.uid}/likes`)
-                    .once('value', snapshopt => {
+                    .once('value', (snapshopt) => {
                         const data = snapshopt.val();
                         const likes = [];
                         for (const key in data) {

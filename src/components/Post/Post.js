@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { getSinglePost } from '../../store/actions/posts';
 
@@ -8,9 +9,9 @@ import Comments from './Comments';
 
 const Post = ({ match }) => {
     const [firstRender, setFirstRender] = useState(true);
-    const post = useSelector(state => state.posts.singlePost);
-    const loading = useSelector(state => state.posts.loading);
-    const userLoading = useSelector(state => state.auth.loading);
+    const post = useSelector((state) => state.posts.singlePost);
+    const loading = useSelector((state) => state.posts.loading);
+    const userLoading = useSelector((state) => state.auth.loading);
     const from =
         match.path === '/post' || match.path === '/post/:id'
             ? 'posts'
@@ -37,6 +38,9 @@ const Post = ({ match }) => {
             ) : (
                 <>
                     <Element post={post} place="single" single />
+                    <Link to="/" className="section__back">
+                        Wróć na stronę główną
+                    </Link>
                     <Comments postId={post.key} from={from} />
                 </>
             )}

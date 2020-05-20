@@ -21,12 +21,9 @@ import { setAlert } from './alert';
 import { auth, storage, database } from '../../firebaseConfig';
 import uuidv4 from 'uuid/v4';
 
-export const createPost = (
-    data,
-    tags,
-    file,
-    setFileError
-) => async dispatch => {
+export const createPost = (data, tags, file, setFileError) => async (
+    dispatch
+) => {
     dispatch({ type: SET_POST_LOADING, payload: true });
     const user = auth.currentUser;
     const uid = user.uid;
@@ -39,7 +36,7 @@ export const createPost = (
 
         upload.on(
             'state_changed',
-            snapshot => {
+            (snapshot) => {
                 const progress =
                     (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
                 dispatch({
@@ -47,7 +44,7 @@ export const createPost = (
                     payload: progress,
                 });
             },
-            err => {
+            (err) => {
                 dispatch({ type: SET_POST_LOADING, payload: false });
                 setFileError(
                     'Plik nie może przekroczyć 20MB, i musi mieć odpowiedni format!'
@@ -111,13 +108,13 @@ export const createPost = (
     }
 };
 
-export const getPosts = (page, from) => async dispatch => {
+export const getPosts = (page, from) => async (dispatch) => {
     dispatch({ type: SET_POST_LOADING, payload: true });
     database
         .ref(`/${from}/`)
         .orderByChild('date')
         .limitToLast(page * 7)
-        .once('value', snapshot => {
+        .once('value', (snapshot) => {
             const posts = [];
             if (!snapshot.val()) {
                 return dispatch({
@@ -128,7 +125,7 @@ export const getPosts = (page, from) => async dispatch => {
                     },
                 });
             }
-            snapshot.forEach(snap => {
+            snapshot.forEach((snap) => {
                 posts.push(snap);
             });
             const returnPosts = [];
@@ -146,7 +143,7 @@ export const getPosts = (page, from) => async dispatch => {
             for (let i = 0; i < returnPosts.length; ++i) {
                 database
                     .ref(`/users/${returnPosts[i].owner}`)
-                    .once('value', snapshopt => {
+                    .once('value', (snapshopt) => {
                         const owner = snapshopt.val();
                         if (!owner) return;
                         returnPosts[i].avatar = owner.avatar;
@@ -157,11 +154,13 @@ export const getPosts = (page, from) => async dispatch => {
                             fetch(
                                 `https://memtasty.firebaseio.com/${from}.json?shallow=true`
                             )
-                                .then(res => res.json())
-                                .then(data => {
+                                .then((res) => res.json())
+                                .then((data) => {
                                     let count = 0;
                                     for (const key in data) {
-                                        count++;
+                                        if (data.hasOwnProperty(key)) {
+                                            count++;
+                                        }
                                     }
                                     const val = Number.isInteger(count / 7)
                                         ? 0
@@ -187,11 +186,11 @@ export const getPosts = (page, from) => async dispatch => {
         });
 };
 
-export const addLike = (status, postId, type, place) => dispatch => {
+export const addLike = (status, postId, type, place) => (dispatch) => {
     const user = auth.currentUser;
     if (!user) return dispatch(toggleLoginWindow('login'));
 
-    database.ref(`/users/${user.uid}/likes`).once('value', snapshopt => {
+    database.ref(`/users/${user.uid}/likes`).once('value', (snapshopt) => {
         const data = snapshopt.val();
         let exists = false;
         for (const key in data) {
@@ -219,9 +218,9 @@ export const addLike = (status, postId, type, place) => dispatch => {
         else value = -1;
 
         const ref = database.ref(`/${from}/${postId}`);
-        ref.once('value', snapshot => {
+        ref.once('value', (snapshot) => {
             const resLikes = snapshot.val().likes;
-            ref.update({ likes: resLikes + value }, err => {
+            ref.update({ likes: resLikes + value }, (err) => {
                 if (!err) {
                     dispatch({
                         type: ADD_LIKE,
@@ -237,15 +236,15 @@ export const addLike = (status, postId, type, place) => dispatch => {
     });
 };
 
-export const getLoggedUserPosts = () => dispatch => {
+export const getLoggedUserPosts = () => (dispatch) => {
     dispatch({ type: SET_POST_LOADING, payload: true });
     const user = auth.currentUser;
     database
         .ref(`/users/${user.uid}/posts`)
         .orderByChild('date')
-        .once('value', snapshot => {
+        .once('value', (snapshot) => {
             let posts = [];
-            snapshot.forEach(post => {
+            snapshot.forEach((post) => {
                 posts.push(post.val());
             });
             if (posts.length === 0) {
@@ -254,11 +253,11 @@ export const getLoggedUserPosts = () => dispatch => {
             posts.reverse();
             const resPosts = [];
             let readyToSend = 0;
-            posts.forEach(post => {
+            posts.forEach((post) => {
                 const from = post.status === 'waiting' ? 'posts' : 'mainPosts';
                 database
                     .ref(`/${from}/${post.key}`)
-                    .once('value', snapshot => {
+                    .once('value', (snapshot) => {
                         resPosts.push({ ...snapshot.val(), key: post.key });
                     })
                     .then(() => {
@@ -277,7 +276,7 @@ export const getLoggedUserPosts = () => dispatch => {
 export const getSinglePost = (id, from) => (dispatch, getState) => {
     dispatch({ type: SET_POST_LOADING, payload: true });
     const downloadedPosts = getState().posts.downloadedPosts;
-    const singlePost = downloadedPosts.find(item => item.key === id);
+    const singlePost = downloadedPosts.find((item) => item.key === id);
     if (singlePost) {
         const postsTable = [];
         let index = 0;
@@ -295,7 +294,7 @@ export const getSinglePost = (id, from) => (dispatch, getState) => {
 
         dispatch(getPostComments(singlePost));
     } else {
-        database.ref(`/${from}/${id}`).once('value', snapshopt => {
+        database.ref(`/${from}/${id}`).once('value', (snapshopt) => {
             const post = snapshopt.val();
             if (!post)
                 return dispatch({ type: SET_POST_LOADING, payload: false });
@@ -316,7 +315,7 @@ export const getSinglePost = (id, from) => (dispatch, getState) => {
 
             database
                 .ref(`/users/${post.owner}`)
-                .once('value', snapshopt => {
+                .once('value', (snapshopt) => {
                     const owner = snapshopt.val();
                     if (!owner) return;
                     post.avatar = owner.avatar;
@@ -329,14 +328,14 @@ export const getSinglePost = (id, from) => (dispatch, getState) => {
     }
 };
 
-export const getPostComments = post => dispatch => {
+export const getPostComments = (post) => (dispatch) => {
     const getData = async () => {
         for (let i = 0; i < post.comments.length; ++i) {
             for (let k = 0; k < post.comments[i].replies.length; ++k) {
                 const reply = post.comments[i].replies[k];
                 database
                     .ref(`/users/${reply.owner}`)
-                    .once('value', snapshopt => {
+                    .once('value', (snapshopt) => {
                         const owner = snapshopt.val();
                         if (!owner) return;
                         post.comments[i].replies[k].avatar = owner.avatar;
@@ -356,7 +355,7 @@ export const getPostComments = post => dispatch => {
         for (let i = 0; i < post.comments.length; ++i) {
             database
                 .ref(`/users/${post.comments[i].owner}`)
-                .once('value', snapshot => {
+                .once('value', (snapshot) => {
                     const owner = snapshot.val();
                     if (!owner) {
                         post.comments[i].nick = 'Nieistniejący użytkownik';
@@ -376,14 +375,14 @@ export const getPostComments = post => dispatch => {
     });
 };
 
-export const getUserLikedComments = () => dispatch => {
+export const getUserLikedComments = () => (dispatch) => {
     const user = auth.currentUser;
     if (user) {
         const likedComments = {};
         database
             .ref(`/users/${user.uid}/commentLikes`)
-            .once('value', res =>
-                res.forEach(item => {
+            .once('value', (res) =>
+                res.forEach((item) => {
                     likedComments[item.key] = item.val();
                 })
             )
@@ -444,16 +443,16 @@ export const addComment = (postId, comment, from) => async (
     }
 };
 
-export const likeComment = (postId, commentId, value, from) => dispatch => {
+export const likeComment = (postId, commentId, value, from) => (dispatch) => {
     const user = auth.currentUser;
     if (!user) return dispatch(toggleLoginWindow('login'));
     database
         .ref(`/users/${user.uid}/commentLikes/${commentId}`)
-        .once('value', res => {
+        .once('value', (res) => {
             if (!res.val()) {
                 database
                     .ref(`/${from}/${postId}/comments/${commentId}`)
-                    .once('value', snapshot => {
+                    .once('value', (snapshot) => {
                         const points = snapshot.val().points;
                         database
                             .ref(`/${from}/${postId}/comments/${commentId}`)
@@ -483,7 +482,7 @@ export const likeComment = (postId, commentId, value, from) => dispatch => {
         });
 };
 
-export const deleteComment = (postId, commentId, from) => dispatch => {
+export const deleteComment = (postId, commentId, from) => (dispatch) => {
     database
         .ref(`/${from}/${postId}/comments/${commentId}`)
         .remove()
@@ -496,7 +495,7 @@ export const deleteComment = (postId, commentId, from) => dispatch => {
                 setAlert('Sukces!', 'Twój komentarz został pomyslnie usunięty')
             );
         })
-        .catch(err => {
+        .catch((err) => {
             console.log(err);
         });
 };
@@ -547,24 +546,20 @@ export const addReply = (postId, commentId, text, from) => async (
     }
 };
 
-export const likeReply = (
-    postId,
-    commentId,
-    replyId,
-    value,
-    from
-) => dispatch => {
+export const likeReply = (postId, commentId, replyId, value, from) => (
+    dispatch
+) => {
     const user = auth.currentUser;
     if (!user) return dispatch(toggleLoginWindow('login'));
     database
         .ref(`/users/${user.uid}/commentLikes/${replyId}`)
-        .once('value', res => {
+        .once('value', (res) => {
             if (!res.val()) {
                 database
                     .ref(
                         `/${from}/${postId}/comments/${commentId}/replies/${replyId}`
                     )
-                    .once('value', snapshot => {
+                    .once('value', (snapshot) => {
                         const points = snapshot.val().points;
                         database
                             .ref(
@@ -597,7 +592,7 @@ export const likeReply = (
         });
 };
 
-export const deleteReply = (postId, commentId, replyId, from) => dispatch => {
+export const deleteReply = (postId, commentId, replyId, from) => (dispatch) => {
     database
         .ref(`/${from}/${postId}/comments/${commentId}/replies/${replyId}`)
         .remove()
@@ -616,13 +611,13 @@ export const deleteReply = (postId, commentId, replyId, from) => dispatch => {
                 )
             );
         })
-        .catch(err => {
+        .catch((err) => {
             console.log(err);
         });
 };
 
-export const addPostToMain = (postId, history) => dispatch => {
-    database.ref(`/posts/${postId}`).once('value', snapshot => {
+export const addPostToMain = (postId, history) => (dispatch) => {
+    database.ref(`/posts/${postId}`).once('value', (snapshot) => {
         const post = snapshot.val();
         if (!post) return;
         post.status = 'main';
@@ -644,7 +639,6 @@ export const addPostToMain = (postId, history) => dispatch => {
                             )
                         );
                     });
-
                 database
                     .ref(`/users/${post.owner}/posts/${postId}`)
                     .update({ status: 'main' });
@@ -652,12 +646,12 @@ export const addPostToMain = (postId, history) => dispatch => {
     });
 };
 
-export const deletePost = (postId, place, history) => dispatch => {
+export const deletePost = (postId, place, history) => (dispatch) => {
     const from = place === 'post' ? 'posts' : 'mainPosts';
     const backTo = place === 'post' ? '/waiting' : '/';
     database
         .ref(`/${from}/${postId}`)
-        .once('value', snapshot => {
+        .once('value', (snapshot) => {
             const post = snapshot.val();
             if (!post) return;
             database.ref(`/${from}/${postId}`).remove();
@@ -672,19 +666,19 @@ export const deletePost = (postId, place, history) => dispatch => {
             storage
                 .ref(`/content/${postId}`)
                 .delete()
-                .catch(err => {
+                .catch((err) => {
                     console.log(err);
                 });
         })
-        .catch(err => {
+        .catch((err) => {
             console.log(err);
         });
 };
 
-export const getRandomPost = history => dispatch => {
+export const getRandomPost = (history) => (dispatch) => {
     fetch(`https://memtasty.firebaseio.com/mainPosts.json?shallow=true`)
-        .then(res => res.json())
-        .then(data => {
+        .then((res) => res.json())
+        .then((data) => {
             const dataArray = [];
             for (const key in data) {
                 dataArray.push(key);
